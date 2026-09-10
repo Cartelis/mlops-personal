@@ -1,0 +1,90 @@
+schema: '2.0'
+stages:
+  prepare:
+    cmd: python src/prepare_data.py
+    deps:
+    - path: data/raw/dataset.csv
+      hash: md5
+      md5: 19a8dabe16b1472ef5516cfdaadb1c6c
+      size: 198429
+      isexec: true
+    - path: src/prepare_data.py
+      hash: md5
+      md5: e41b6689eb0b296d64b0a133ebd356a9
+      size: 657
+      isexec: true
+    outs:
+    - path: data/processed/test.csv
+      hash: md5
+      md5: e043b9a9543d7ecedcbda01fad7b9567
+      size: 39037
+      isexec: true
+    - path: data/processed/train.csv
+      hash: md5
+      md5: a9fa690d8cee1e8b2a74f346b4b314c0
+      size: 156006
+      isexec: true
+  train:
+    cmd: python src/train.py
+    deps:
+    - path: data/processed/test.csv
+      hash: md5
+      md5: e043b9a9543d7ecedcbda01fad7b9567
+      size: 39037
+      isexec: true
+    - path: data/processed/train.csv
+      hash: md5
+      md5: a9fa690d8cee1e8b2a74f346b4b314c0
+      size: 156006
+      isexec: true
+    - path: src/train.py
+      hash: md5
+      md5: bd7a84b96925ecf35509b37ac6eda633
+      size: 3741
+      isexec: true
+    params:
+      params.yaml:
+        train:
+          n_estimators: 100
+          max_depth: 5
+          random_seed: 42
+    outs:
+    - path: models/model.pkl
+      hash: md5
+      md5: 192e7a0ce2e16e118ffe646917044baf
+      size: 378873
+      isexec: true
+    - path: models/run_id.txt
+      hash: md5
+      md5: 653d5755b1944b419fdc6798063332b0
+      size: 33
+      isexec: true
+  evaluate:
+    cmd: python src/evaluate.py
+    deps:
+    - path: data/processed/test.csv
+      hash: md5
+      md5: e043b9a9543d7ecedcbda01fad7b9567
+      size: 39037
+      isexec: true
+    - path: models/model.pkl
+      hash: md5
+      md5: 192e7a0ce2e16e118ffe646917044baf
+      size: 378873
+      isexec: true
+    - path: models/run_id.txt
+      hash: md5
+      md5: 653d5755b1944b419fdc6798063332b0
+      size: 33
+      isexec: true
+    - path: src/evaluate.py
+      hash: md5
+      md5: 2ab0048d6012538a848c5b72212096fd
+      size: 1523
+      isexec: true
+    outs:
+    - path: metrics.json
+      hash: md5
+      md5: 3cebd70c2e7658228da3158e51c7c81a
+      size: 102
+      isexec: true

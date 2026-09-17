@@ -18,10 +18,10 @@ if str(ROOT) not in sys.path:
 
 from observability.logging_config import get_logger, log_request
 from security.inference_audit import log_inference
-from security.input_validation import ValidationError, validate_predict_payload
+from security.input_validation import FEATURE_NAMES, ValidationError, validate_predict_payload
 
 app = FastAPI()
-model = joblib.load(os.environ.get("MODEL_PATH", "models/model.pkl"))
+model = joblib.load(os.environ.get("MODEL_PATH", str(ROOT / "models/model.pkl")))
 logger = get_logger("fraud-api")
 
 REQUEST_COUNT = Counter(
@@ -78,7 +78,8 @@ def predict(features: dict):
         VALIDATION_ERRORS.labels(reason=type(exc).__name__).inc()
         raise HTTPException(status_code=422, detail=str(exc)) from exc
 
-    df = pd.DataFrame([features])
+    # JSON object order is not a model feature order. Ignore allowed metadata.
+    df = pd.DataFrame([[features[name] for name in FEATURE_NAMES]], columns=FEATURE_NAMES)
     pred = model.predict(df)
     pred_int = int(pred[0])
     PREDICTION_COUNT.labels(str(pred_int)).inc()

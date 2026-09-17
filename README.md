@@ -1,7 +1,7 @@
 # Mašininio mokymosi operacijų sistemos (MLOps) kurso repo
 
 Užrašai [knyga (pdf)](https://klevas.mif.vu.lt/~linp/mlops/mlops-uzrasai.pdf).
-Pratybų [notes (pdf)](https://klevas.mif.vu.lt/~linp/mlops/mlops-pratybos.pdf)
+Pratybų [medžiaga (PDF)](./docs/mlops-pratybos.pdf) — atnaujinta 2026-09-17; 3 savaitės praktika ir Ubuntu paruošimas viename dokumente.
 
 #### Artimiausios datos:
 1. [Pirmos užduoties](./pirma.md) pridavimo data (2026-10-21)
@@ -19,4 +19,4 @@ Pratybų [notes (pdf)](https://klevas.mif.vu.lt/~linp/mlops/mlops-pratybos.pdf)
 #### Kurso turinys:
 1. (2026-09-09) 1 savaitė: [Teorija](https://klevas.mif.vu.lt/~linp/mlops/mlops-01.pdf).
 2. (2026-09-10) 2 savaitė: [Teorija](./slides/mlops-02.pdf).
-3. (2026-09-17) 3 savaitė: [Teorija](https://klevas.mif.vu.lt/~linp/mlops/mlops-03.pdf).
+3. (2026-09-17) 3 savaitė: [Teorija](https://klevas.mif.vu.lt/~linp/mlops/mlops-03.pdf), [praktika (PDF, nuo 30 p.)](./docs/mlops-pratybos.pdf#page=30).

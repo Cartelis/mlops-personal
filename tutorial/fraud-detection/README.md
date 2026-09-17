@@ -1,8 +1,14 @@
-# fraud-detection — 2 savaitės pradinis projektas
+# fraud-detection — 2–3 savaičių praktinis projektas
 
 Kurso semestro artefaktas: sintetinė sukčiavimo aptikimo užduotis (RandomForest,
 1 000 eilučių, 10 požymių). Katalogas pildosi kiekvieną savaitę — šiuo metu jame
-2 savaitės („Atkartojamumas ir eksperimentų sekimas") medžiaga.
+2 savaitės („Atkartojamumas ir eksperimentų sekimas“) medžiaga ir
+3 savaitės CPU/ONNX vykdymo failai.
+
+**3 savaitė:** [praktikos PDF, nuo 30 p.](../../docs/mlops-pratybos.pdf#page=30).
+Docker, Trivy ir GitHub CLI diegimas pateiktas tame pačiame PDF, 35–36 p.
+Komandas kopijuokite iš PDF kodo blokų. GPU ir CI reikalingi papildomi failai,
+kurie nėra šio minimalaus rinkinio dalis.
 
 **Instrukcijos žingsnis po žingsnio — pratybų medžiagoje (2 savaitės praktika).**
 Trumpai:

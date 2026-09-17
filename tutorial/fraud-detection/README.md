@@ -5,8 +5,7 @@ Kurso semestro artefaktas: sintetinė sukčiavimo aptikimo užduotis (RandomFore
 2 savaitės („Atkartojamumas ir eksperimentų sekimas“) medžiaga ir
 3 savaitės CPU/ONNX vykdymo failai.
 
-**3 savaitė:** [praktikos PDF, nuo 30 p.](../../docs/mlops-pratybos.pdf#page=30).
-Docker, Trivy ir GitHub CLI diegimas pateiktas tame pačiame PDF, 35–36 p.
+**3 savaitė:** [praktikos PDF, nuo 30 p.](https://klevas.mif.vu.lt/~linp/mlops/mlops-pratybos.pdf#page=30).
 Komandas kopijuokite iš PDF kodo blokų. GPU ir CI reikalingi papildomi failai,
 kurie nėra šio minimalaus rinkinio dalis.
 

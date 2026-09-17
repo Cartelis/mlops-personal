@@ -1,1 +1,0 @@
-"""Observability helpers for week 11: logging, drift reports, log analysis."""

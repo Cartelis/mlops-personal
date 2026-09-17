@@ -1,4 +1,0 @@
-pytest>=7.4
-httpx>=0.25
-ruff>=0.1
-prometheus-client>=0.19   # reikalinga src/serve.py (naudoja testai)

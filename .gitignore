@@ -15,6 +15,8 @@ models/*.onnx
 mlruns/
 mlflow.db
 mlartifacts/
+multirun/
+outputs/
 
 # DVC internals; .dvc/config is NOT ignored - the remote configuration lives in Git
 .dvc/cache/

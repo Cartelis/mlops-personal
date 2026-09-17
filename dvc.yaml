@@ -13,8 +13,9 @@ stages:
       - src/train.py
       - data/processed/train.csv
       - data/processed/test.csv
-    params:
-      - params.yaml:
+      - conf/config.yaml        # Instead of params.yaml, we now use Hydra's config.yaml for training parameters
+    # params:
+    #   - params.yaml:
     outs:
       - models/model.pkl
       - models/run_id.txt:

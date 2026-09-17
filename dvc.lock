@@ -10,8 +10,8 @@ stages:
       isexec: true
     - path: src/prepare_data.py
       hash: md5
-      md5: e41b6689eb0b296d64b0a133ebd356a9
-      size: 657
+      md5: cb664d830b329f691e146b5bc909021d
+      size: 633
       isexec: true
     outs:
     - path: data/processed/test.csv
@@ -27,6 +27,11 @@ stages:
   train:
     cmd: python src/train.py
     deps:
+    - path: conf/config.yaml
+      hash: md5
+      md5: b1a04b0c8f972d4d699b7c9df27f73a7
+      size: 64
+      isexec: true
     - path: data/processed/test.csv
       hash: md5
       md5: e043b9a9543d7ecedcbda01fad7b9567
@@ -39,15 +44,9 @@ stages:
       isexec: true
     - path: src/train.py
       hash: md5
-      md5: bd7a84b96925ecf35509b37ac6eda633
-      size: 3741
+      md5: e0e6a286f8f58d7865a24fc83c50da18
+      size: 4166
       isexec: true
-    params:
-      params.yaml:
-        train:
-          n_estimators: 300
-          max_depth: 2
-          random_seed: 42
     outs:
     - path: models/model.pkl
       hash: md5
@@ -56,7 +55,7 @@ stages:
       isexec: true
     - path: models/run_id.txt
       hash: md5
-      md5: 122ccb4147adfa8f7cee48290d7a216b
+      md5: c7b8aea1c7cb5cf01fd71eff65beca42
       size: 33
       isexec: true
   evaluate:
@@ -74,13 +73,13 @@ stages:
       isexec: true
     - path: models/run_id.txt
       hash: md5
-      md5: 122ccb4147adfa8f7cee48290d7a216b
+      md5: c7b8aea1c7cb5cf01fd71eff65beca42
       size: 33
       isexec: true
     - path: src/evaluate.py
       hash: md5
-      md5: 2ab0048d6012538a848c5b72212096fd
-      size: 1523
+      md5: fe25ac0ed74eb85e90e19a52bad8d48d
+      size: 1485
       isexec: true
     outs:
     - path: metrics.json

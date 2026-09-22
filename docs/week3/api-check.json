@@ -1,0 +1,10 @@
+{
+  "status": "PASS",
+  "parity_rows": 100,
+  "order_and_metadata_checks": 200,
+  "invalid_payload_checks": 12,
+  "checks": 212,
+  "cpu_url": "http://127.0.0.1:18080",
+  "onnx_url": "http://127.0.0.1:18081",
+  "checked_at_utc": "2026-09-22T10:28:10.630004+00:00"
+}

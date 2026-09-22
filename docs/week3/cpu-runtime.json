@@ -1,0 +1,12 @@
+{
+  "image": "mlops-cpu:local",
+  "container": "week3-cpu",
+  "image_id": "sha256:56e28f874c3929fb41ef83cf95cd43f55a79407d72c9c7a32c9df9872138f51e",
+  "url": "http://127.0.0.1:18080",
+  "uid": 1000,
+  "health": "healthy",
+  "http_ready_seconds": 11.382,
+  "cold_start_definition": "docker run invocation to first HTTP 200 /health; image already local",
+  "http_ready_within_5s": false,
+  "checked_at_utc": "2026-09-22T10:27:14.741959+00:00"
+}

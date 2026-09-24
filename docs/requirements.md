@@ -35,6 +35,26 @@ Tikslas: recall >= 0.92, false positive <= 0.5%.
 | NFR-09 | Atsekamumas      | Kiekvienas eksperimentas turi MLflow run ID, git commit ir duomenų md5 tag'us; kiekvienas diegiamas modelis – `model_id` | 100 % run'ų |
 | NFR-10 | Duomenų versija  | Mokymo duomenų versija fiksuota DVC (`dvc.lock` md5 = run'o `dvc_raw_md5`) | 100 % run'ų |
 
+## 3.x Konteinerizacijos NFR (v1.2)
+
+Šiame demonstraciniame darbe dydžio/laiko tikslai vertinami pagal realius matavimus. Neįvykdytas tikslas registruojamas su priežastimi, o ne pakeičiamas fiktyviu rezultatu.
+
+| ID | Reikalavimas | Patikra / įrodymas |
+|---|---|---|
+| NFR-11 | CPU rootfs <=500 MB; ONNX rootfs <=300 MB tikslas | `docs/image-sizes.md`: platforma, `du --apparent-size` rootfs baitai ir image ID JSON; Docker `.Size` atskirai (containerd turinys suspaustas) |
+| NFR-12 | ONNX parengtis <=5 s tikslas | `docs/week3/onnx-runtime.json`: docker run pradžia -> pirmas HTTP200, vaizdas vietinis; ne build ar pull laikas |
+| NFR-13 | 0 CRITICAL prieš publikavimą | Trivy JSON sutampa su image ID; `scan-report --gate`, CI exit-code1; HIGH radiniams peržiūra ir sprendimas |
+| NFR-14 | CPU/ONNX/GPU servisai ne root | `docker exec ... id`, UID !=0; HTTP/Docker health; GPU papildomai tikras CUDA skaičiavimas |
+
+## 4.x Debesijos NFR (v1.3)
+
+| ID     | Reikalavimas              | KPI                         |
+|--------|---------------------------|-----------------------------|
+| NFR-15 | Monthly infra cost        | <= 50 USD (GCP credits)     |
+| NFR-16 | Cost per inference        | <= 0.0002 USD               |
+| NFR-17 | Managed endpoint SLA      | Uptime >= 99.9% (Cloud Run) |
+| NFR-18 | IaC reproducibility       | terraform apply < 15 min    |
+
 ## 10.x Agentinis elgesys (v1.9)
 
 | ID     | Reikalavimas              | KPI                         |
@@ -103,7 +123,13 @@ Tikslas: recall >= 0.92, false positive <= 0.5%.
 | Versija | Data       | Autorius | Pakeitimai |
 |---------|------------|----------|------------|
 | 1.0     | 2026-09-15 | komanda  | Pradinis dokumentas |
+<<<<<<< HEAD
 | 1.1     | 2026-09-10 | Cartelis | MLflow + DVC pipeline, atkartojamumo NFR (NFR-08–NFR-10) |
+=======
+| 1.1     | 2026-09-09 | komanda  | MLflow + DVC pipeline, atkartojamumo NFR (NFR-08–NFR-10) |
+| 1.2     | 2026-09-16 | kurso pavyzdys | Patikrinta Docker laboratorija, NFR-11–NFR-14, matavimai ir saugumo vartas |
+| 1.3     | 2026-09-24 | kurso pavyzdys | GCP Terraform, Cloud Run, cost analysis (NFR-15–NFR-18) |
+>>>>>>> temp-branch
 | 1.9     | 2026-11-24 | komanda  | Self-healing LangGraph agentas (NFR-38–NFR-41) |
 | 1.10    | 2026-12-01 | komanda  | Observability stack (NFR-42–NFR-45) |
 | 1.11    | 2026-12-08 | komanda  | Scaling, spot, TCO (NFR-46–NFR-49) |

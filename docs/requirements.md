@@ -123,13 +123,9 @@ Tikslas: recall >= 0.92, false positive <= 0.5%.
 | Versija | Data       | Autorius | Pakeitimai |
 |---------|------------|----------|------------|
 | 1.0     | 2026-09-15 | komanda  | Pradinis dokumentas |
-<<<<<<< HEAD
-| 1.1     | 2026-09-10 | Cartelis | MLflow + DVC pipeline, atkartojamumo NFR (NFR-08–NFR-10) |
-=======
 | 1.1     | 2026-09-09 | komanda  | MLflow + DVC pipeline, atkartojamumo NFR (NFR-08–NFR-10) |
 | 1.2     | 2026-09-16 | kurso pavyzdys | Patikrinta Docker laboratorija, NFR-11–NFR-14, matavimai ir saugumo vartas |
 | 1.3     | 2026-09-24 | kurso pavyzdys | GCP Terraform, Cloud Run, cost analysis (NFR-15–NFR-18) |
->>>>>>> temp-branch
 | 1.9     | 2026-11-24 | komanda  | Self-healing LangGraph agentas (NFR-38–NFR-41) |
 | 1.10    | 2026-12-01 | komanda  | Observability stack (NFR-42–NFR-45) |
 | 1.11    | 2026-12-08 | komanda  | Scaling, spot, TCO (NFR-46–NFR-49) |

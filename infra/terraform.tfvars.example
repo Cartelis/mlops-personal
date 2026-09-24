@@ -1,0 +1,13 @@
+project_id   = "your-gcp-project-id"
+region       = "europe-west1"
+service_name = "mlops-fraud-api"
+
+# Placeholder image lets `terraform apply` succeed in one shot (Cloud Run
+# requires an existing image). After pushing the real image, switch to:
+#   image = "europe-west1-docker.pkg.dev/your-gcp-project-id/mlops/mlops-cpu:v1.2.0"
+image        = "us-docker.pkg.dev/cloudrun/container/hello"
+
+# Autoscaling (Cloud Run instances ~ K8s replicas):
+# min 0 = scale-to-zero (pay only for requests); min 1 = always-warm (no cold start)
+min_instances = 0
+max_instances = 5

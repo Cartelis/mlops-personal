@@ -1,6 +1,25 @@
-# Optional spot node pool for an existing GKE cluster.
-# infra/main.tf does not call this module, so `terraform apply` does not
-# create a cluster or a node pool. Using it also requires container.googleapis.com.
+# GKE spot (preemptible) node pool for cost-optimized inference workloads
+variable "project_id" {
+  type = string
+}
+
+variable "cluster_name" {
+  type = string
+}
+
+variable "cluster_location" {
+  type = string
+}
+
+variable "node_count" {
+  type    = number
+  default = 1
+}
+
+variable "machine_type" {
+  type    = string
+  default = "e2-medium"
+}
 
 resource "google_container_node_pool" "spot_inference" {
   name     = "spot-inference"
@@ -16,7 +35,7 @@ resource "google_container_node_pool" "spot_inference" {
     disk_size_gb = 30
 
     labels = {
-      workload  = "mlops-inference"
+      workload = "mlops-inference"
       cost-tier = "spot"
     }
 

@@ -1,0 +1,99 @@
+name: ML Pipeline
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+env:
+  IMAGE_NAME: ghcr.io/${{ github.repository }}/mlops-cpu
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install ruff
+      - run: ruff check src/ tests/ scripts/
+
+  data-validation:
+    runs-on: ubuntu-latest
+    needs: lint
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install -r requirements.txt -r requirements-testing.txt
+      - run: python scripts/bootstrap.py
+      - run: python scripts/run_data_validation.py
+
+  test:
+    runs-on: ubuntu-latest
+    needs: data-validation
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install -r requirements.txt -r requirements-dev.txt -r requirements-testing.txt
+      - run: python scripts/bootstrap.py
+      - run: pytest tests/ -v
+
+  model-gate:
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install -r requirements.txt
+      - run: python scripts/bootstrap.py && python src/evaluate.py
+      - run: python scripts/check_model_gate.py --threshold 0.95
+
+  governance:
+    runs-on: ubuntu-latest
+    needs: model-gate
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install -r requirements.txt -r requirements-governance.txt
+      - run: python scripts/bootstrap.py
+      - run: python scripts/generate_governance_report.py
+
+  build-push:
+    runs-on: ubuntu-latest
+    needs: governance
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    permissions:
+      contents: write
+      packages: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Build and push
+        run: |
+          TAG=sha-${{ github.sha }}
+          docker build -f docker/Dockerfile.cpu -t $IMAGE_NAME:$TAG .
+          docker push $IMAGE_NAME:$TAG
+          echo "IMAGE_TAG=$TAG" >> $GITHUB_ENV
+      - name: Update K8s manifest
+        run: |
+          sed -i "s|image:.*mlops-cpu:.*|image: ${IMAGE_NAME}:${IMAGE_TAG}|" k8s/deployment-cpu.yaml
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add k8s/deployment-cpu.yaml
+          git diff --staged --quiet || git commit -m "ci: bump image to ${IMAGE_TAG}"
+          git push

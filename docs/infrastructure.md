@@ -15,8 +15,6 @@ Git repo → Terraform → GCS + Artifact Registry + Cloud Run
 
 ## Deploy
 
-The command sequence, the `linux/amd64` image build, and the placeholder-image order are in [`../infra/README.md`](../infra/README.md).
-
 ```bash
 cd infra
 cp terraform.tfvars.example terraform.tfvars

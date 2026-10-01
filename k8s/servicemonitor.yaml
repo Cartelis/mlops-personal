@@ -1,0 +1,15 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: mlops-fraud-api
+  namespace: mlops
+  labels:
+    release: prometheus
+spec:
+  selector:
+    matchLabels:
+      app: mlops-fraud-api
+  endpoints:
+    - port: http
+      path: /metrics
+      interval: 30s

@@ -1,0 +1,31 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: pytorch-ddp-2gpu
+  namespace: mlops
+spec:
+  template:
+    spec:
+      restartPolicy: Never
+      tolerations:
+        - key: "nvidia.com/gpu"
+          operator: "Exists"
+          effect: "NoSchedule"
+      containers:
+        - name: trainer
+          image: mlops-gpu:v1.2.0
+          imagePullPolicy: IfNotPresent
+          workingDir: /app
+          command: ["torchrun"]
+          args:
+            - "--nproc_per_node=2"
+            - "src/train_ddp.py"
+            - "--epochs=5"
+          env:
+            - name: NCCL_DEBUG
+              value: "INFO"
+          resources:
+            limits:
+              nvidia.com/gpu: 2
+            requests:
+              nvidia.com/gpu: 2

@@ -1,0 +1,19 @@
+# Minimal edge inference image (week 14)
+FROM python:3.11-slim
+WORKDIR /app
+
+RUN pip install --no-cache-dir onnxruntime==1.19.2 fastapi==0.115.0 uvicorn==0.30.0 numpy==1.26.4
+
+COPY models/model.edge.onnx ./models/model.edge.onnx
+COPY src/serve_onnx.py ./src/serve_onnx.py
+
+ENV MODEL_PATH=/app/models/model.edge.onnx
+
+RUN useradd -m -u 1000 mluser && chown -R mluser:mluser /app
+USER mluser
+
+EXPOSE 8080
+HEALTHCHECK --interval=30s --timeout=3s --retries=3 \
+  CMD python -c "import urllib.request; urllib.request.urlopen('http://localhost:8080/health')"
+
+CMD ["uvicorn", "src.serve_onnx:app", "--host", "0.0.0.0", "--port", "8080"]

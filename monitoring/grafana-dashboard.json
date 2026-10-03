@@ -1,0 +1,73 @@
+{
+  "title": "Fraud Detection API - Week 11",
+  "uid": "fraud-api-week11",
+  "timezone": "browser",
+  "schemaVersion": 39,
+  "version": 1,
+  "panels": [
+    {
+      "id": 1,
+      "title": "Request rate (RPS)",
+      "type": "timeseries",
+      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 0},
+      "targets": [
+        {
+          "expr": "sum(rate(fraud_api_requests_total[1m]))",
+          "legendFormat": "rps"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "title": "p50 / p95 latency (s)",
+      "type": "timeseries",
+      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 0},
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.50, sum(rate(fraud_api_request_duration_seconds_bucket[5m])) by (le))",
+          "legendFormat": "p50"
+        },
+        {
+          "expr": "histogram_quantile(0.95, sum(rate(fraud_api_request_duration_seconds_bucket[5m])) by (le))",
+          "legendFormat": "p95"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "title": "Error rate",
+      "type": "timeseries",
+      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 8},
+      "targets": [
+        {
+          "expr": "sum(rate(fraud_api_requests_total{status=~\"5..\"}[5m])) / sum(rate(fraud_api_requests_total[5m]))",
+          "legendFormat": "errors"
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "title": "Predictions by class",
+      "type": "timeseries",
+      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 8},
+      "targets": [
+        {
+          "expr": "sum(rate(fraud_predictions_total[5m])) by (prediction)",
+          "legendFormat": "{{prediction}}"
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "title": "Drift PSI (f0)",
+      "type": "stat",
+      "gridPos": {"h": 4, "w": 6, "x": 0, "y": 16},
+      "targets": [
+        {
+          "expr": "fraud_drift_psi",
+          "legendFormat": "psi"
+        }
+      ]
+    }
+  ]
+}

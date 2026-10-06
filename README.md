@@ -22,3 +22,4 @@ Pratybų [notes (pdf)](https://klevas.mif.vu.lt/~linp/mlops/mlops-pratybos.pdf)
 3. (2026-09-17) 3 savaitė: [Teorija](https://klevas.mif.vu.lt/~linp/mlops/mlops-03.pdf).
 4. (2026-09-24) 4 savaitė: [Teorija](https://klevas.mif.vu.lt/~linp/mlops/mlops-04.pdf).
 5. (2026-10-01) 5 savaitė: [Teorija](https://klevas.mif.vu.lt/~linp/mlops/mlops-05.pdf).
+6. (2026-10-08) 6 savaitė: [Teorija](https://klevas.mif.vu.lt/~linp/mlops/mlops-06.pdf).

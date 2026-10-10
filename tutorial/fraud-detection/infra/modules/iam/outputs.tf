@@ -1,0 +1,3 @@
+output "email" {
+  value = google_service_account.cloud_run.email
+}

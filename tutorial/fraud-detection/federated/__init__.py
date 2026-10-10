@@ -1,0 +1,1 @@
+"""Federated learning simulation for week 14 (Flower + FedAvg)."""

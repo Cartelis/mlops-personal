@@ -1,0 +1,12 @@
+# Runs training and export without installing Python on the host.
+FROM python:3.12-slim-trixie
+# Install available OS security fixes; scan the resulting image before publishing.
+RUN apt-get update \
+    && apt-get upgrade -y \
+    && rm -rf /var/lib/apt/lists/*
+ENV PYTHONUNBUFFERED=1 PYTHONDONTWRITEBYTECODE=1
+WORKDIR /app
+COPY requirements-cpu.txt requirements-export.txt constraints-week3.txt ./
+RUN python -m pip install --no-cache-dir --no-compile -r requirements-export.txt
+COPY scripts/bootstrap.py scripts/export_onnx.py ./scripts/
+CMD ["sh", "-c", "python scripts/bootstrap.py && python scripts/export_onnx.py"]

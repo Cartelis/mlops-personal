@@ -1,0 +1,20 @@
+# Deliberately inefficient but runnable comparison for the seminar.
+# Unlike the runtime image this retains the whole project, exporter and tests.
+FROM python:3.12-slim-trixie
+# Install available OS security fixes; scan the resulting image before publishing.
+RUN apt-get update \
+    && apt-get upgrade -y \
+    && rm -rf /var/lib/apt/lists/*
+ENV MODEL_PATH=/app/models/model.pkl \
+    PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1
+WORKDIR /app
+COPY . .
+RUN python -m pip install --no-cache-dir --no-compile -r requirements-week3-test.txt \
+    && useradd --create-home --uid 1000 mluser \
+    && mkdir -p /app/docs && chown mluser:mluser /app/docs
+USER mluser
+EXPOSE 8080
+HEALTHCHECK --interval=5s --timeout=3s --start-period=20s --retries=6 \
+  CMD python -c "import urllib.request; urllib.request.urlopen('http://localhost:8080/health', timeout=2)"
+CMD ["uvicorn", "src.serve:app", "--host", "0.0.0.0", "--port", "8080"]

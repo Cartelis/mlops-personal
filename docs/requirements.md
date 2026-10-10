@@ -55,6 +55,14 @@ Tikslas: recall >= 0.92, false positive <= 0.5%.
 | NFR-17 | Managed endpoint SLA      | Uptime >= 99.9% (Cloud Run) |
 | NFR-18 | IaC reproducibility       | terraform apply < 15 min    |
 
+## 5.x Kubernetes NFR (v1.4)
+| ID     | Reikalavimas              | KPI                         |
+|--------|---------------------------|-----------------------------|
+| NFR-19 | Deployment rollout time   | <= 60 s (2 replicas)        |
+| NFR-20 | GPU training job duration | <= 30 min (2 GPU, sample)   |
+| NFR-21 | GPU utilization           | >= 70% avg during training  |
+| NFR-22 | Inference HA              | >= 2 replicas, rolling update|
+
 ## 10.x Agentinis elgesys (v1.9)
 
 | ID     | Reikalavimas              | KPI                         |
@@ -126,6 +134,7 @@ Tikslas: recall >= 0.92, false positive <= 0.5%.
 | 1.1     | 2026-09-09 | komanda  | MLflow + DVC pipeline, atkartojamumo NFR (NFR-08–NFR-10) |
 | 1.2     | 2026-09-16 | kurso pavyzdys | Patikrinta Docker laboratorija, NFR-11–NFR-14, matavimai ir saugumo vartas |
 | 1.3     | 2026-09-24 | kurso pavyzdys | GCP Terraform, Cloud Run, cost analysis (NFR-15–NFR-18) |
+| 1.4     | 2026-10-03 | Cartelis | K8s inference + HPC DDP training |
 | 1.9     | 2026-11-24 | komanda  | Self-healing LangGraph agentas (NFR-38–NFR-41) |
 | 1.10    | 2026-12-01 | komanda  | Observability stack (NFR-42–NFR-45) |
 | 1.11    | 2026-12-08 | komanda  | Scaling, spot, TCO (NFR-46–NFR-49) |

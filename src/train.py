@@ -4,7 +4,6 @@
   python src/train.py --n_estimators 300 # override one of them
   dvc repro                              # via the pipeline: records hashes in dvc.lock, produces an MLflow run
 """
-import argparse
 import os
 import subprocess
 from pathlib import Path

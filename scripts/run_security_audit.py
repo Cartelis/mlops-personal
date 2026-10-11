@@ -32,8 +32,8 @@ def main() -> None:
     parser.add_argument("--output", default="docs/security-audit.json")
     args = parser.parse_args()
 
-    from scripts.security_scan import run_trivy
     from scripts.generate_sbom import generate_sbom
+    from scripts.security_scan import run_trivy
 
     sbom_path = ROOT / "docs" / "sbom-cpu.json"
     report = {

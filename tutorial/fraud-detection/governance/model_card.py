@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 import json
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -33,7 +33,7 @@ def build_model_card(
     manifest_path = manifest_path or ROOT / "models" / "model.pkl.manifest.json"
     metrics = _load_json(metrics_path)
     manifest = _load_json(manifest_path)
-    generated = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
+    generated = datetime.now(UTC).strftime("%Y-%m-%d %H:%M UTC")
 
     accuracy = metrics.get("accuracy", "N/A")
     f1 = metrics.get("f1", "N/A")

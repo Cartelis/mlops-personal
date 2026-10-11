@@ -1,0 +1,35 @@
+{
+  "model_card": {
+    "path": "docs/model-card.md",
+    "sections": 8,
+    "required_sections": 8
+  },
+  "governance_doc": {
+    "exists": true,
+    "has_risk_tier": true,
+    "has_mitigations": true
+  },
+  "traceability": {
+    "rows": 20,
+    "critical_nfrs": 20,
+    "coverage_ratio": 1.0
+  },
+  "security_audit": {
+    "exists": false,
+    "overall_pass": false
+  },
+  "capstone_checklist": {
+    "path": "docs/capstone-checklist.md",
+    "items_total": 12,
+    "items_green": 12,
+    "pass_rate": 1.0
+  },
+  "gates": {
+    "model_card_sections": true,
+    "required_sections_present": true,
+    "eu_ai_act_documented": true,
+    "traceability_coverage": true,
+    "capstone_checklist": true
+  },
+  "overall_pass": true
+}

@@ -1,10 +1,10 @@
 """Generate sample data and train a baseline model for local/Docker testing."""
 import os
 
+import joblib
 import numpy as np
 import pandas as pd
 from sklearn.ensemble import RandomForestClassifier
-import joblib
 
 SEED = 42
 N_SAMPLES = 1000

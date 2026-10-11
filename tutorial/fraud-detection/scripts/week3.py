@@ -9,7 +9,7 @@ import time
 import urllib.error
 import urllib.parse
 import urllib.request
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -34,7 +34,7 @@ def request(url: str, payload: dict | None = None) -> tuple[int, dict]:
 
 def record(name: str, value: dict) -> None:
     EVIDENCE.mkdir(parents=True, exist_ok=True)
-    value["checked_at_utc"] = datetime.now(timezone.utc).isoformat()
+    value["checked_at_utc"] = datetime.now(UTC).isoformat()
     (EVIDENCE / f"{name}.json").write_text(json.dumps(value, indent=2) + "\n")
 
 
@@ -173,7 +173,7 @@ def sizes(args: argparse.Namespace) -> None:
 
 
 def scan_report(args: argparse.Namespace) -> None:
-    lines = ["# Saugumo skenavimas — 3 savaitė", "", f"Laikas (UTC): {datetime.now(timezone.utc).isoformat()}", "",
+    lines = ["# Saugumo skenavimas — 3 savaitė", "", f"Laikas (UTC): {datetime.now(UTC).isoformat()}", "",
              "| Vaizdas | HIGH | CRITICAL |", "|---|---:|---:|"]
     critical = 0
     for kind in args.kinds:

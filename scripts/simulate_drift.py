@@ -1,7 +1,8 @@
 """Create drifted sample data to trigger the self-healing agent."""
+from pathlib import Path
+
 import numpy as np
 import pandas as pd
-from pathlib import Path
 
 SEED = 42
 OUT = Path("data/raw/drift_sample.csv")

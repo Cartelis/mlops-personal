@@ -1,5 +1,4 @@
 """Tests for data contract validation."""
-from pathlib import Path
 
 import pandas as pd
 

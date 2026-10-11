@@ -4,7 +4,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -24,7 +24,7 @@ def apply_watermark(model_path: Path, owner: str = "mlops-team") -> dict:
         "sha256": digest,
         "watermark": hashlib.sha256(f"{digest}:{WATERMARK_SALT}".encode()).hexdigest()[:32],
         "owner": owner,
-        "applied_at": datetime.now(timezone.utc).isoformat(),
+        "applied_at": datetime.now(UTC).isoformat(),
     }
     manifest_path(model_path).write_text(json.dumps(manifest, indent=2), encoding="utf-8")
     return manifest

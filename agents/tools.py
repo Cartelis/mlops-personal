@@ -5,7 +5,7 @@ import json
 import os
 import subprocess
 import sys
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 import httpx
@@ -21,7 +21,7 @@ ACCURACY_GATE = 0.95
 def audit(action: str, details: dict) -> None:
     AUDIT_LOG.parent.mkdir(parents=True, exist_ok=True)
     entry = {
-        "ts": datetime.now(timezone.utc).isoformat(),
+        "ts": datetime.now(UTC).isoformat(),
         "action": action,
         **details,
     }
@@ -33,12 +33,12 @@ def _retrain_count_today() -> int:
     if not MAX_RETRAINS_FILE.exists():
         return 0
     data = json.loads(MAX_RETRAINS_FILE.read_text())
-    today = datetime.now(timezone.utc).date().isoformat()
+    today = datetime.now(UTC).date().isoformat()
     return int(data.get(today, 0))
 
 
 def _increment_retrain_count() -> None:
-    today = datetime.now(timezone.utc).date().isoformat()
+    today = datetime.now(UTC).date().isoformat()
     data = {}
     if MAX_RETRAINS_FILE.exists():
         data = json.loads(MAX_RETRAINS_FILE.read_text())

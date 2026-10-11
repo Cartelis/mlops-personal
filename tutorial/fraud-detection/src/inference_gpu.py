@@ -3,7 +3,7 @@ import argparse
 import time
 
 import torch
-import torch.nn as nn
+from torch import nn
 
 
 class FraudNet(nn.Module):

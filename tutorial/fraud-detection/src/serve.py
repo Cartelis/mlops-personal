@@ -18,7 +18,11 @@ if str(ROOT) not in sys.path:
 
 from observability.logging_config import get_logger, log_request
 from security.inference_audit import log_inference
-from security.input_validation import FEATURE_NAMES, ValidationError, validate_predict_payload
+from security.input_validation import (
+    FEATURE_NAMES,
+    ValidationError,
+    validate_predict_payload,
+)
 
 app = FastAPI()
 model = joblib.load(os.environ.get("MODEL_PATH", str(ROOT / "models/model.pkl")))

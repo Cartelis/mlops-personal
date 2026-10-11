@@ -5,7 +5,7 @@ import time
 
 import torch
 import torch.distributed as dist
-import torch.nn as nn
+from torch import nn
 from torch.nn.parallel import DistributedDataParallel as DDP
 from torch.utils.data import DataLoader, TensorDataset
 

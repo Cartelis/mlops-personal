@@ -1,7 +1,7 @@
 """Adversarial robustness regression test."""
+import json
 import subprocess
 import sys
-import json
 
 MAX_FLIP_RATE = 0.15
 

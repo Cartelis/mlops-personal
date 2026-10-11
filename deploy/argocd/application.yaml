@@ -6,7 +6,7 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://github.com/<org>/mlops-fraud-detection.git
+    repoURL: https://github.com/Cartelis/mlops-personal.git
     targetRevision: main
     path: k8s
   destination:

@@ -3,7 +3,7 @@ from __future__ import annotations
 
 import hashlib
 import json
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -20,7 +20,7 @@ def _feature_hash(payload: dict) -> str:
 def log_inference(payload: dict, prediction: int, model_version: str = MODEL_VERSION) -> None:
     AUDIT_LOG.parent.mkdir(parents=True, exist_ok=True)
     entry = {
-        "ts": datetime.now(timezone.utc).isoformat(),
+        "ts": datetime.now(UTC).isoformat(),
         "event": "inference_audit",
         "prediction": prediction,
         "feature_hash": _feature_hash(payload),

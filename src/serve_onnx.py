@@ -11,7 +11,11 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from security.input_validation import FEATURE_NAMES, ValidationError, validate_predict_payload
+from security.input_validation import (
+    FEATURE_NAMES,
+    ValidationError,
+    validate_predict_payload,
+)
 
 app = FastAPI()
 session = ort.InferenceSession(

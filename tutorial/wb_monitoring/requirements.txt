@@ -1,4 +1,0 @@
-torch==2.14.0
-wandb==0.29.0
-reasoning-from-scratch==0.1.21
-matplotlib>=3.8

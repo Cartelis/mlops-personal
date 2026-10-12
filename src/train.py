@@ -26,7 +26,7 @@ def git_commit() -> str:
         return subprocess.check_output(
             ["git", "rev-parse", "--short=8", "HEAD"], cwd=ROOT, text=True
         ).strip()
-    except Exception:
+    except Exception:   # noqa: BLE001
         return "unknown"
 
 
@@ -34,7 +34,7 @@ def dvc_md5(dvc_file: Path) -> str:
     """md5 of the raw dataset as recorded by `dvc add` - the join key to dvc.lock."""
     try:
         return yaml.safe_load(dvc_file.read_text())["outs"][0]["md5"]
-    except Exception:
+    except Exception:   # noqa: BLE001
         return "untracked"
 
 @hydra.main(version_base=None, config_path="../conf", config_name="config")

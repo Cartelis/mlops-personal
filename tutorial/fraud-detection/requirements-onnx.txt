@@ -1,6 +1,0 @@
--c constraints-week3.txt
-# Week 3: small inference-only environment (no sklearn or exporter).
-numpy==2.5.3
-onnxruntime==1.30.0
-fastapi==0.141.1
-uvicorn==0.53.0

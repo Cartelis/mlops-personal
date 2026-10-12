@@ -123,8 +123,7 @@ class APIEndpointTests(unittest.TestCase):
     def test_invalid_base_url_is_rejected(self):
         for url in ("localhost:18080", "file:///tmp/api", "http://host?query=1",
                     "http://host#fragment", "http://user:password@host"):
-            with self.subTest(url=url):
-                with self.assertRaisesRegex(RuntimeError, "API base URL"):
+            with self.subTest(url=url), self.assertRaisesRegex(RuntimeError, "API base URL"):
                     week3.normalize_base_url(url)
 
 

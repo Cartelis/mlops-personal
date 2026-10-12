@@ -1,1 +1,0 @@
-"""Governance helpers for week 16: model cards, capstone checklist."""

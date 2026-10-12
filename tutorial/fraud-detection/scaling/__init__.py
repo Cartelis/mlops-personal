@@ -1,1 +1,0 @@
-"""Load testing and scaling helpers for week 12."""

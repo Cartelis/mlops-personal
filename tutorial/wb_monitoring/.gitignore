@@ -1,8 +1,0 @@
-.venv/
-__pycache__/
-
-# runtime artefaktai - parsisiunciami / sugeneruojami paleidus
-qwen3/
-deepseek-r1-math-train.json
-checkpoints/
-wandb/

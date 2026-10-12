@@ -40,7 +40,7 @@ def record(name: str, value: dict) -> None:
 
 def cleanup(kind: str) -> None:
     name = f"week3-{kind}"
-    found = subprocess.run(["docker", "inspect", name], capture_output=True, text=True)
+    found = subprocess.run(["docker", "inspect", name], check=False, capture_output=True, text=True)
     if found.returncode:
         # Also distinguish an absent name from a stopped/unreachable Docker daemon.
         docker("info", "--format", "{{.ServerVersion}}")
@@ -148,7 +148,7 @@ def sizes(args: argparse.Namespace) -> None:
     rows = []
     for kind in args.kinds:
         image = f"mlops-{kind}:local"
-        found = subprocess.run(["docker", "image", "inspect", image], capture_output=True, text=True)
+        found = subprocess.run(["docker", "image", "inspect", image], check=False, capture_output=True, text=True)
         if found.returncode:
             if kind == "gpu":
                 continue

@@ -49,7 +49,7 @@ class GPUHealthHandler(BaseHTTPRequestHandler):
             return
         try:
             self.send_json(200, cuda_probe())
-        except Exception as exc:
+        except Exception as exc:    # noqa: BLE001
             self.send_json(503, {"status": "error", "detail": str(exc)})
 
     def send_json(self, status: int, payload: dict[str, Any]) -> None:

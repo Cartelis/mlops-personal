@@ -1,4 +1,0 @@
-# Training/export must use the same sklearn/numpy versions as CPU inference.
--r requirements-cpu.txt
-onnx==1.22.0
-skl2onnx==1.20.0

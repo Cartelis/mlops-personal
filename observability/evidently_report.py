@@ -68,7 +68,7 @@ def build_report() -> dict:
         )
         snapshot.save_html(str(html_path))
         report["evidently_html"] = str(html_path)
-    except Exception as exc:
+    except Exception as exc:    # noqa: BLE001
         report["evidently_note"] = f"HTML report skipped: {exc}"
 
     return report

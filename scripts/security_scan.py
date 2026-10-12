@@ -24,7 +24,7 @@ def run_trivy(image: str, fail_on_critical: bool) -> dict:
         "--severity", "CRITICAL,HIGH",
         image,
     ]
-    proc = subprocess.run(cmd, capture_output=True, text=True)
+    proc = subprocess.run(cmd, check=False, capture_output=True, text=True)
     if proc.returncode not in (0, 1):
         raise RuntimeError(proc.stderr or proc.stdout)
 

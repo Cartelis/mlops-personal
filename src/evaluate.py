@@ -30,7 +30,7 @@ def main() -> None:
             client = mlflow.MlflowClient()
             for key, value in metrics.items():
                 client.log_metric(run_id_file.read_text().strip(), f"eval/{key}", value)
-        except Exception as exc:                               # best-effort: run may live on an unreachable server
+        except Exception as exc:    # noqa: BLE001             # best-effort: run may live on an unreachable server
             print(f"warning: eval metrics not attached to the training run ({exc})")
 
 

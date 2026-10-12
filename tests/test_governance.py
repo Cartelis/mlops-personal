@@ -44,6 +44,7 @@ def test_capstone_checklist_critical_items(bootstrapped_model):
 def test_governance_report_passes(bootstrapped_model):
     result = subprocess.run(
         [sys.executable, "scripts/generate_governance_report.py"],
+        check=True,
         cwd=ROOT,
         capture_output=True,
         text=True,

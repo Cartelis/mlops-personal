@@ -63,6 +63,15 @@ Tikslas: recall >= 0.92, false positive <= 0.5%.
 | NFR-21 | GPU utilization           | >= 70% avg during training  |
 | NFR-22 | Inference HA              | >= 2 replicas, rolling update|
 
+## 6.x CI/CD NFR (v1.5)
+| ID     | Reikalavimas              | KPI                         |
+|--------|---------------------------|-----------------------------|
+| NFR-23 | Model rollback time       | <= 5 min                    |
+| NFR-24 | CI pipeline duration      | <= 15 min (main branch)     |
+| NFR-25 | Model gate accuracy       | >= 0.95 for production      |
+| NFR-26 | Deploy only after tests   | 100% PRs blocked on fail    |
+
+
 ## 10.x Agentinis elgesys (v1.9)
 
 | ID     | Reikalavimas              | KPI                         |
@@ -135,6 +144,7 @@ Tikslas: recall >= 0.92, false positive <= 0.5%.
 | 1.2     | 2026-09-16 | kurso pavyzdys | Patikrinta Docker laboratorija, NFR-11–NFR-14, matavimai ir saugumo vartas |
 | 1.3     | 2026-09-24 | kurso pavyzdys | GCP Terraform, Cloud Run, cost analysis (NFR-15–NFR-18) |
 | 1.4     | 2026-10-03 | Cartelis | K8s inference + HPC DDP training |
+| 1.5     | 2026-10-13 | Cartelis | GitHub Actions + ArgoCD GitOps |
 | 1.9     | 2026-11-24 | komanda  | Self-healing LangGraph agentas (NFR-38–NFR-41) |
 | 1.10    | 2026-12-01 | komanda  | Observability stack (NFR-42–NFR-45) |
 | 1.11    | 2026-12-08 | komanda  | Scaling, spot, TCO (NFR-46–NFR-49) |

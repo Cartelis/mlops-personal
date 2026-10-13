@@ -42,7 +42,9 @@ jobs:
         with:
           python-version: "3.11"
       - run: pip install -r requirements.txt -r requirements-dev.txt -r requirements-testing.txt
+      - run: pip install onnx skl2onnx
       - run: python scripts/bootstrap.py
+      - run: python scripts/export_onnx.py
       - run: pytest tests/ -v
 
   model-gate:

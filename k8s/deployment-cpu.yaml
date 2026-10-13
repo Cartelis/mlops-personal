@@ -20,7 +20,7 @@ spec:
       containers:
         - name: api
           # Replace with your Artifact Registry or local image
-          image: mlops-cpu:v1.2.0
+          image: ghcr.io/cartelis/mlops-personal/mlops-cpu:sha-f344010f23b5889cdd98498114f635154fcd6c59
           imagePullPolicy: IfNotPresent
           securityContext:
             runAsNonRoot: true

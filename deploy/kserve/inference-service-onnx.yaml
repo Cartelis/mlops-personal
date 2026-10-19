@@ -7,7 +7,7 @@ spec:
   predictor:
     containers:
       - name: kserve-container
-        image: ghcr.io/<org>/mlops-onnx:v1.2.0
+        image: ghcr.io/cartelis/week3-onnx:v1.2.2-cpu
         env:
           - name: MODEL_PATH
             value: /app/models/model.onnx

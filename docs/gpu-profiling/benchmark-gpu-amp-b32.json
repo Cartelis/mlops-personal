@@ -1,0 +1,10 @@
+{
+  "p50_ms": 0.3125,
+  "p95_ms": 0.355,
+  "throughput_ips": 101145.03,
+  "iterations": 200,
+  "batch_size": 32,
+  "precision": "amp",
+  "compiled": false,
+  "gpu": "Tesla V100-SXM2-32GB"
+}

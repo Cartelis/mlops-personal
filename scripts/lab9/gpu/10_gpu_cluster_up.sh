@@ -18,6 +18,9 @@ minikube start -p "$GPU_PROFILE" --driver=docker --container-runtime=docker --gp
   --cpus="$GPU_CPUS" --memory="$GPU_MEMORY" \
   --mount --mount-string="$LLM_CACHE_DIR:/mnt/llm-cache"
 docker exec "$GPU_PROFILE" sysctl -q -w fs.inotify.max_user_instances=8192 fs.inotify.max_user_watches=1048576 >/dev/null 2>&1 || true
+for i in $(seq 1 30); do   # the NVIDIA device plugin registers the GPU some seconds after the node is Ready
+  [ -n "$(kg get nodes -o jsonpath='{.items[0].status.allocatable.nvidia\.com/gpu}' 2>/dev/null)" ] && break; sleep 3
+done
 kg get nodes -o custom-columns='NODE:.metadata.name,GPU:.status.allocatable.nvidia\.com/gpu'
 say "10.3 Loading $LLM_IMAGE into the node (several GB - a few minutes)"
 minikube -p "$GPU_PROFILE" image load "$LLM_IMAGE"

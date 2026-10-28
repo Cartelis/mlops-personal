@@ -34,7 +34,7 @@ spec:
                 cpu: "500m"
                 memory: "1Gi"
               limits:
-                memory: "2Gi"
+                memory: "3Gi"   # 2Gi is too tight: Ray's memory monitor (95 %) kills the tune job during the best-config retrain
             volumeMounts:
               - name: work
                 mountPath: /work/data

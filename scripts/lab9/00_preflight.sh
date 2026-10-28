@@ -10,16 +10,18 @@ say "0.1 Docker"
 docker version --format 'client {{.Client.Version}} / server {{.Server.Version}}' || die "Docker is not running"
 note "Docker Desktop (macOS/Windows): give the VM at least 8 GB of memory (Settings > Resources)."
 
-say "0.2 Tools (kind, kubectl, helm) - downloaded into .lab9/bin if missing"
+say "0.2 Tools (kind, kubectl, helm) - downloaded into .lab9/bin if missing or another version"
 os="$(uname -s | tr '[:upper:]' '[:lower:]')"; arch="$(uname -m)"
 case "$arch" in x86_64) arch=amd64;; aarch64|arm64) arch=arm64;; esac
-if ! command -v kind >/dev/null; then
+# An older kind (e.g. v0.20 from an earlier course) cannot start the kindest/node:v1.37 image, and the chart
+# needs helm >= 3.19 - so the version is checked, not only presence. .lab9/bin comes first in PATH (lib.sh).
+if ! kind version 2>/dev/null | grep -qF "$KIND_VERSION "; then
   curl -fsSLo "$LAB9_DIR/bin/kind" "https://kind.sigs.k8s.io/dl/$KIND_VERSION/kind-$os-$arch" && chmod +x "$LAB9_DIR/bin/kind"
 fi
-if ! command -v kubectl >/dev/null; then
+if ! kubectl version --client 2>/dev/null | grep -qF "$KUBECTL_VERSION"; then
   curl -fsSLo "$LAB9_DIR/bin/kubectl" "https://dl.k8s.io/release/$KUBECTL_VERSION/bin/$os/$arch/kubectl" && chmod +x "$LAB9_DIR/bin/kubectl"
 fi
-if ! command -v helm >/dev/null; then
+if ! helm version --short 2>/dev/null | grep -qF "$HELM_VERSION+"; then
   curl -fsSL "https://get.helm.sh/helm-$HELM_VERSION-$os-$arch.tar.gz" | tar -xzO "$os-$arch/helm" > "$LAB9_DIR/bin/helm" && chmod +x "$LAB9_DIR/bin/helm"
 fi
 kind version; kubectl version --client; helm version --short

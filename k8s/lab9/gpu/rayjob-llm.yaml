@@ -27,6 +27,8 @@ spec:
             - name: ray-head
               image: fraud-llm:lab9
               imagePullPolicy: IfNotPresent
+              envFrom:                                           # the driver (entrypoint) runs here and decides
+                - secretRef: {name: wandb, optional: true}       # whether W&B is on - it needs the same env
               ports:
                 - {containerPort: 6379, name: gcs}
                 - {containerPort: 8265, name: dashboard}
@@ -52,10 +54,8 @@ spec:
               - name: ray-worker
                 image: fraud-llm:lab9
                 imagePullPolicy: IfNotPresent
-                envFrom:
-                  - secretRef: {name: wandb, optional: true}
-                env:
-                  - {name: WANDB_MODE, value: "offline"}      # overridden to online by the Secret's WANDB_MODE if set
+                envFrom:                                         # WANDB_MODE online/offline (+ key) from 12_submit_llm.sh;
+                  - secretRef: {name: wandb, optional: true}     # no 'env:' WANDB_MODE here - 'env' would override it
                 resources:
                   requests: {cpu: "1", memory: "8Gi", nvidia.com/gpu: 1}
                   limits: {memory: "16Gi", nvidia.com/gpu: 1}

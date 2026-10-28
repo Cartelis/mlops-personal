@@ -17,6 +17,8 @@ if [ -n "${WANDB_API_KEY:-}" ]; then
     --dry-run=client -o yaml | kg apply -f - >/dev/null
   note "Secret 'wandb' set from WANDB_API_KEY - the run will appear in your W&B project"
 else
+  kg -n ray-gpu create secret generic wandb --from-literal=WANDB_MODE=offline \
+    --dry-run=client -o yaml | kg apply -f - >/dev/null
   note "WANDB_API_KEY not set - W&B runs offline inside the pod (export it and re-run to log online)"
 fi
 say "12.2 kubectl apply -f k8s/lab9/gpu/rayjob-llm.yaml"

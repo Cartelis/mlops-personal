@@ -10,7 +10,7 @@ Minimal compute on purpose (as in week 2's smoke run): the defaults train on 40 
 take a few minutes on one GPU. The principle, not the loss curve, is the point.
 
   python pipeline/ray_jobs/ray_train_llm.py --gpu                              # 1 worker, 1 GPU
-  python pipeline/ray_jobs/ray_train_llm.py --num-workers 2 --no-gpu --train-size 4 --max-seq-len 256
+  python pipeline/ray_jobs/ray_train_llm.py --num-workers 2 --no-gpu --train-size 4 --max-seq-len 384
                                                                               # CPU smoke: 2 workers, data sharded
   python pipeline/ray_jobs/ray_train_llm.py --gpu --num-workers 8             # the one-line change (8 GPUs)
 """

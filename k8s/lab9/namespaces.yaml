@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: mlops            # MLflow + the model service (as in assignment U1)
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: airflow          # the orchestrator, its pods and the Ray cluster it uses

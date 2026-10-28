@@ -23,10 +23,10 @@ ROOT = Path(__file__).resolve().parents[1]
 def git_commit() -> str:
     try:
         return subprocess.check_output(
-            ["git", "rev-parse", "--short=8", "HEAD"], cwd=ROOT, text=True
+            ["git", "rev-parse", "--short=8", "HEAD"], cwd=ROOT, text=True, stderr=subprocess.DEVNULL
         ).strip()
     except Exception:
-        return "unknown"
+        return os.environ.get("GIT_COMMIT", "unknown")      # inside a container image (week 9) git is absent
 
 
 def dvc_md5(dvc_file: Path) -> str:
@@ -34,7 +34,12 @@ def dvc_md5(dvc_file: Path) -> str:
     try:
         return yaml.safe_load(dvc_file.read_text())["outs"][0]["md5"]
     except Exception:
-        return "untracked"
+        pass
+    raw = dvc_file.with_suffix("")                              # no pointer file (a pod): hash the bytes -
+    if raw.exists():                                            # DVC's md5 of a single file is the plain md5
+        import hashlib
+        return hashlib.md5(raw.read_bytes()).hexdigest()
+    return "untracked"
 
 
 def main() -> None:
@@ -80,7 +85,8 @@ def main() -> None:
         f1 = f1_score(y_test, preds, average="weighted")
 
         info = mlflow.sklearn.log_model(                            # model + environment files
-            model, name="model", input_example=x_train.head(3)
+            model, name="model", input_example=x_train.head(3),
+            skops_trusted_types=["sklearn.tree._tree.Tree"],        # skops >= 0.15 needs this for tree models
         )
         mlflow.log_metric("accuracy", acc, model_id=info.model_id)  # metric <-> model link
         mlflow.log_metric("f1", f1, model_id=info.model_id)

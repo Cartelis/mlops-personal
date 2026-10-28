@@ -46,6 +46,15 @@ Tikslas: recall >= 0.92, false positive <= 0.5%.
 | NFR-13 | 0 CRITICAL prieš publikavimą | Trivy JSON sutampa su image ID; `scan-report --gate`, CI exit-code1; HIGH radiniams peržiūra ir sprendimas |
 | NFR-14 | CPU/ONNX/GPU servisai ne root | `docker exec ... id`, UID !=0; HTTP/Docker health; GPU papildomai tikras CUDA skaičiavimas |
 
+## 9.x Orkestravimas (v1.8)
+
+| ID     | Reikalavimas                         | KPI                                                      |
+|--------|--------------------------------------|----------------------------------------------------------|
+| NFR-34 | Pipeline end-to-end trukmė           | <= 10 min lab klasteryje (išmatuota: A ≈ 1,5 min)         |
+| NFR-35 | Sąlyginė tune šaka                   | vykdoma tada ir tik tada, kai accuracy < params.threshold |
+| NFR-36 | Žmogaus patvirtinimas prieš champion | 100 % pakėlimų per ApprovalOperator; vartotojas + laikas  |
+| NFR-37 | Idempotentiškas registravimas        | pakartotas register nesukuria dubliuotos versijos        |
+
 ## 10.x Agentinis elgesys (v1.9)
 
 | ID     | Reikalavimas              | KPI                         |
@@ -116,6 +125,7 @@ Tikslas: recall >= 0.92, false positive <= 0.5%.
 | 1.0     | 2026-09-15 | komanda  | Pradinis dokumentas |
 | 1.1     | 2026-09-09 | komanda  | MLflow + DVC pipeline, atkartojamumo NFR (NFR-08–NFR-10) |
 | 1.2     | 2026-09-16 | kurso pavyzdys | Patikrinta Docker laboratorija, NFR-11–NFR-14, matavimai ir saugumo vartas |
+| 1.8     | 2026-10-28 | komanda  | Airflow 3 orkestravimas + Ray Tune (NFR-34–NFR-37) |
 | 1.9     | 2026-11-24 | komanda  | Self-healing LangGraph agentas (NFR-38–NFR-41) |
 | 1.10    | 2026-12-01 | komanda  | Observability stack (NFR-42–NFR-45) |
 | 1.11    | 2026-12-08 | komanda  | Scaling, spot, TCO (NFR-46–NFR-49) |

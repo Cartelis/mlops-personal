@@ -1,0 +1,75 @@
+# Airflow 3 in the lab cluster - values for the official chart (apache-airflow/airflow 1.22.0).
+# Small on purpose: LocalExecutor, no Celery/Redis/statsd, explicit resource requests, DAGs from
+# the mounted volume (k8s/lab9/airflow-dags-volume.yaml). Triggerer on: ApprovalOperator needs it.
+executor: LocalExecutor
+airflowVersion: "3.2.2"
+defaultAirflowTag: "3.2.2"
+
+# Fixed secrets so that every component agrees (the chart would otherwise generate random ones per upgrade).
+webserverSecretKey: lab9-webserver-secret-key-change-me
+apiSecretKey: lab9-api-secret-key-change-me
+
+config:
+  core:
+    load_examples: "False"
+    dags_are_paused_at_creation: "False"
+  api:
+    expose_config: "True"
+  scheduler:
+    dag_dir_list_interval: 30
+
+dags:
+  persistence:
+    enabled: true
+    existingClaim: airflow-dags
+  gitSync:
+    enabled: false
+
+statsd:
+  enabled: false
+redis:
+  enabled: false
+flower:
+  enabled: false
+pgbouncer:
+  enabled: false
+
+postgresql:
+  enabled: true
+
+# The chart runs 'airflow db migrate' and the admin-user creation as Helm post-install hooks; with
+# 'helm install --wait' that deadlocks (every component waits for the migrations in an init
+# container, Helm waits for the components before running the hooks). Plain Jobs instead.
+migrateDatabaseJob:
+  useHelmHooks: false
+createUserJob:
+  useHelmHooks: false
+
+# LocalExecutor: every running task is a subprocess *inside the scheduler pod*
+# (~200 MB each: DagBag + Kubernetes client), so the limit must leave room for
+# a few tasks in parallel on top of the scheduler's own ~500 MB.
+scheduler:
+  resources:
+    requests: {cpu: 300m, memory: 512Mi}
+    limits: {memory: 2Gi}
+apiServer:
+  resources:
+    requests: {cpu: 200m, memory: 512Mi}
+    limits: {memory: 1Gi}
+dagProcessor:
+  enabled: true
+  resources:
+    requests: {cpu: 100m, memory: 256Mi}
+    limits: {memory: 768Mi}
+triggerer:                      # runs the deferred pod/approval triggers (~550 MB idle)
+  enabled: true
+  persistence:
+    enabled: false
+  resources:
+    requests: {cpu: 100m, memory: 256Mi}
+    limits: {memory: 1Gi}
+
+# Lets the scheduler (which runs the tasks under LocalExecutor) create pods in this namespace.
+rbac:
+  create: true
+allowPodLaunching: true

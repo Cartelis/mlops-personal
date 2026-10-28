@@ -1,0 +1,84 @@
+# MLflow Tracking Server in the cluster (the U1 pattern): one Deployment, one Service, one PVC.
+# Reachable from pods as http://mlflow.mlops.svc:5000 and from your laptop via port-forward.
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mlflow-data
+  namespace: mlops
+spec:
+  accessModes: ["ReadWriteOnce"]
+  resources:
+    requests:
+      storage: 2Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mlflow
+  namespace: mlops
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate          # the PVC is ReadWriteOnce: stop the old pod before starting the new one
+  selector:
+    matchLabels:
+      app: mlflow
+  template:
+    metadata:
+      labels:
+        app: mlflow
+    spec:
+      securityContext:
+        fsGroup: 1000
+      containers:
+        - name: mlflow
+          image: ghcr.io/mlflow/mlflow:v3.15.2
+          imagePullPolicy: IfNotPresent
+          command: ["mlflow", "server"]
+          args:
+            - "--host=0.0.0.0"
+            - "--port=5000"
+            - "--backend-store-uri=sqlite:////mlflow/mlflow.db"
+            - "--artifacts-destination=/mlflow/artifacts"
+            - "--serve-artifacts"
+            - "--workers=1"           # default 4 uvicorn workers: ~1 GiB RSS, OOM-killed under the limit below
+            # MLflow 3.x only accepts Host headers of localhost/private IPs by default; in-cluster
+            # clients use the Service name, so list it (exact "host:port" or fnmatch patterns).
+            - "--allowed-hosts=localhost:*,127.0.0.1:*,mlflow:*,mlflow.mlops:*,mlflow.mlops.svc:*,mlflow.mlops.svc.cluster.local:*"
+          env:
+            - name: MLFLOW_SERVER_ENABLE_JOB_EXECUTION   # GenAI job runner = 8 extra python processes (~1.5 GiB)
+              value: "false"
+          ports:
+            - containerPort: 5000
+          volumeMounts:
+            - name: data
+              mountPath: /mlflow
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "256Mi"
+            limits:
+              memory: "1Gi"
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 5000
+            initialDelaySeconds: 10
+            periodSeconds: 5
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: mlflow-data
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mlflow
+  namespace: mlops
+spec:
+  selector:
+    app: mlflow
+  ports:
+    - name: http
+      port: 5000
+      targetPort: 5000

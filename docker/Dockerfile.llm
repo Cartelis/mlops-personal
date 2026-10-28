@@ -1,0 +1,26 @@
+# Week 9, extended part: the image for the Ray Train LLM fine-tuning job (GPU).
+# Build from the project root:  docker build -f docker/Dockerfile.llm -t fraud-llm:lab9 .
+# ~7 GB: PyTorch with CUDA 12.8 libraries, Ray, W&B and the book's package. Needs the NVIDIA
+# container toolkit on the host (docker run --gpus all) - the driver comes from the host.
+FROM python:3.12-slim-trixie
+RUN apt-get update \
+    && apt-get upgrade -y \
+    && apt-get install -y --no-install-recommends curl \
+    && rm -rf /var/lib/apt/lists/*
+ENV PYTHONUNBUFFERED=1 PYTHONDONTWRITEBYTECODE=1 RAY_USAGE_STATS_ENABLED=0 \
+    PIP_NO_CACHE_DIR=1 LLM_CACHE_DIR=/cache
+WORKDIR /work
+COPY requirements-llm.txt ./
+# torch 2.14 (week 2's pin) ships CUDA 13 wheels on PyPI -> NVIDIA driver >= 580 on the host.
+# Older driver (>= 570)? build with:
+#   --build-arg TORCH_SPEC="torch==2.11.0" --build-arg TORCH_INDEX="https://download.pytorch.org/whl/cu128"
+ARG TORCH_SPEC="torch==2.14.0"
+ARG TORCH_INDEX="https://pypi.org/simple"
+RUN pip install --no-compile "$TORCH_SPEC" --index-url "$TORCH_INDEX"
+RUN pip install --no-compile -r requirements-llm.txt
+COPY pipeline/ray_jobs/ ./pipeline/ray_jobs/
+RUN mkdir -p /cache /work/checkpoints \
+    && useradd --create-home --uid 1000 mluser \
+    && chmod -R a+rX /work && chown -R mluser:mluser /work /cache
+USER mluser
+CMD ["python", "-c", "import torch, ray; print('fraud-llm image: torch', torch.__version__, 'cuda', torch.cuda.is_available(), 'ray', ray.__version__)"]

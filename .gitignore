@@ -25,3 +25,10 @@ mlartifacts/
 
 .env
 *.log
+# week 9 lab: generated files and the LLM venv
+.lab9/
+.venv-llm/
+.venv-airflow/
+models/tune_result.json
+models/register_result.json
+approvals/production.flag

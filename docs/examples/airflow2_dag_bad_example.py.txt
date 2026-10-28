@@ -1,3 +1,9 @@
+# Week 9 - kept as a BAD EXAMPLE (not loaded by Airflow; .txt on purpose).
+# This was the original pipeline/airflow_dag.py: it imports from airflow.operators.bash (removed in Airflow 3)
+# and runs the training scripts INSIDE the Airflow worker with BashOperator - the orchestrator would need
+# scikit-learn, pandas and the data on its own disk. The lab DAG (pipeline/dags/fraud_dag.py) runs every step
+# as a pod from the training image instead: Airflow decides, containers compute.
+
 """Reference Airflow DAG for comparison with Ray (week 9).
 
 Requires Apache Airflow installed. Not the primary lab deliverable.

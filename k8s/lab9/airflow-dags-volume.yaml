@@ -1,0 +1,28 @@
+# The DAG folder mounted into the kind node (k8s/lab9/kind-cluster.yaml) exposed to Airflow as a
+# PersistentVolume + claim. The chart mounts the claim at /opt/airflow/dags in every component.
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: airflow-dags
+spec:
+  capacity:
+    storage: 100Mi
+  accessModes: ["ReadOnlyMany"]
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: lab9-dags
+  hostPath:
+    path: /mnt/lab9/dags
+    type: Directory
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: airflow-dags
+  namespace: airflow
+spec:
+  accessModes: ["ReadOnlyMany"]
+  storageClassName: lab9-dags
+  volumeName: airflow-dags
+  resources:
+    requests:
+      storage: 100Mi

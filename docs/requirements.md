@@ -78,6 +78,15 @@ Tikslas: recall >= 0.92, false positive <= 0.5%.
 | NFR-32 | GPU utilization optimized | >= 70% during batch infer   |
 | NFR-33 | p95 inference latency     | <= 2 ms (batch=32, tabular) |
 
+## 9.x Orkestravimas (v1.8)
+| ID     | Reikalavimas                         | KPI                                                       |
+|--------|--------------------------------------|-----------------------------------------------------------|
+| NFR-34 | Pipeline end-to-end trukmė           | <= 10 min lab klasteryje (išmatuota: A ≈ 1,5 min)         |
+| NFR-35 | Sąlyginė tune šaka                   | vykdoma tada ir tik tada, kai accuracy < params.threshold |
+| NFR-36 | Žmogaus patvirtinimas prieš champion | 100 % pakėlimų per ApprovalOperator; vartotojas + laikas  |
+| NFR-37 | Idempotentiškas registravimas        | pakartotas register nesukuria dubliuotos versijos         |
+
+
 ## 10.x Agentinis elgesys (v1.9)
 
 | ID     | Reikalavimas              | KPI                         |
@@ -152,6 +161,7 @@ Tikslas: recall >= 0.92, false positive <= 0.5%.
 | 1.4     | 2026-10-03 | Cartelis | K8s inference + HPC DDP training |
 | 1.5     | 2026-10-13 | Cartelis | GitHub Actions + ArgoCD GitOps |
 | 1.7     | 2026-10-27 | Cartelis | GPU profiling and optimization |
+| 1.8     | 2026-10-28 | komanda  | Airflow 3 orkestravimas + Ray Tune (NFR-34–NFR-37) |
 | 1.9     | 2026-11-24 | komanda  | Self-healing LangGraph agentas (NFR-38–NFR-41) |
 | 1.10    | 2026-12-01 | komanda  | Observability stack (NFR-42–NFR-45) |
 | 1.11    | 2026-12-08 | komanda  | Scaling, spot, TCO (NFR-46–NFR-49) |

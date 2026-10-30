@@ -1,0 +1,5 @@
+# Week 9, extended part: Ray Train fine-tuning of Qwen3-0.6B (the week-2 wb_monitoring recipe + Ray).
+# torch is installed first from the CUDA 12.8 wheel index (see docker/Dockerfile.llm); these are the rest.
+ray[default,train]==2.59.0
+wandb==0.29.0
+reasoning-from-scratch==0.1.21

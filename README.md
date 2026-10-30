@@ -49,7 +49,10 @@ python scripts/benchmark_gpu_inference.py --precision fp32 --batch-size 1 --outp
 python scripts/benchmark_gpu_inference.py --precision amp --batch-size 32 --output docs/benchmark-gpu-amp-b32.json
 python scripts/profile_gpu.py
 
-# Week 9: Ray orchestration pipeline
+# Week 9: Airflow 3 + Ray + MLflow in a kind cluster (see docs/orchestration.md)
+scripts/lab9/00_preflight.sh && scripts/lab9/01_build_image.sh      # at home
+scripts/lab9/02_cluster_up.sh ... scripts/lab9/09_inference_test.sh  # the lab, one script at a time
+# Ray-only variant (also used by week 10):
 pip install -r requirements-orchestration.txt
 export MLFLOW_TRACKING_URI=http://127.0.0.1:5000
 python pipeline/ray_pipeline.py --run-id demo --approve

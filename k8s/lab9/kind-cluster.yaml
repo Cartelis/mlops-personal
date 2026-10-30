@@ -1,0 +1,11 @@
+# Week 9 lab cluster. scripts/lab9/02_cluster_up.sh replaces __DAGS_DIR__ with the absolute
+# path of pipeline/dags on your machine, so Airflow inside the cluster sees your DAG files.
+kind: Cluster
+apiVersion: kind.x-k8s.io/v1alpha4
+name: lab9
+nodes:
+  - role: control-plane
+    extraMounts:
+      - hostPath: __DAGS_DIR__
+        containerPath: /mnt/lab9/dags
+        readOnly: true

@@ -1,0 +1,35 @@
+# Week 9: the image every pipeline step runs from (Airflow pods, Ray head/worker, model service).
+# Build from the project root:  docker build -f docker/Dockerfile.train -t fraud-train:lab9 .
+FROM python:3.12-slim-trixie AS base
+RUN apt-get update \
+    && apt-get upgrade -y \
+    && apt-get install -y --no-install-recommends curl \
+    && rm -rf /var/lib/apt/lists/*
+
+FROM base AS builder
+WORKDIR /build
+COPY requirements-train.txt constraints-week3.txt ./
+RUN python -m venv /opt/venv \
+    && /opt/venv/bin/pip install --no-cache-dir --no-compile -r requirements-train.txt
+
+FROM base AS runtime
+ARG GIT_COMMIT=unknown
+ENV PATH="/opt/venv/bin:$PATH" \
+    GIT_COMMIT=${GIT_COMMIT} \
+    PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1 \
+    RAY_USAGE_STATS_ENABLED=0
+# ROOT-relative paths in src/*.py resolve to /work/... ; data/ and models/ are volumes at run time.
+WORKDIR /work
+COPY --from=builder /opt/venv /opt/venv
+COPY params.yaml ./
+COPY src/ ./src/
+COPY scripts/ ./scripts/
+COPY pipeline/ ./pipeline/
+COPY observability/ ./observability/
+COPY security/ ./security/
+RUN mkdir -p data models \
+    && useradd --create-home --uid 1000 mluser \
+    && chmod -R a+rX /work && chown -R mluser:mluser /work
+USER mluser
+CMD ["python", "-c", "import ray, mlflow, sklearn; print('fraud-train image: ray', ray.__version__, 'mlflow', mlflow.__version__, 'sklearn', sklearn.__version__)"]

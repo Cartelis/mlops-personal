@@ -25,8 +25,36 @@ from security.input_validation import (
 )
 
 app = FastAPI()
-model = joblib.load(os.environ.get("MODEL_PATH", str(ROOT / "models/model.pkl")))
 logger = get_logger("fraud-api")
+
+# Where the model comes from (week 9): MODEL_URI points at the registry, e.g. models:/fraud-detector@champion,
+# and the service loads it through MLflow at start-up; without MODEL_URI the week-3 behaviour stays -
+# the pickle at MODEL_PATH baked into the image.
+MODEL_URI = os.environ.get("MODEL_URI")
+MODEL_PATH = os.environ.get("MODEL_PATH", str(ROOT / "models/model.pkl"))
+MODEL_INFO: dict = {"source": MODEL_URI or MODEL_PATH}
+
+
+def _load_model():
+    if MODEL_URI:
+        import mlflow                       # only needed in the registry-backed deployment
+        from mlflow import MlflowClient
+
+        loaded = mlflow.sklearn.load_model(MODEL_URI)
+        if MODEL_URI.startswith("models:/") and "@" in MODEL_URI:
+            name, alias = MODEL_URI[len("models:/"):].split("@", 1)
+            mv = MlflowClient().get_model_version_by_alias(name, alias)
+            MODEL_INFO.update({"model": name, "alias": alias, "version": int(mv.version), "run_id": mv.run_id})
+        return loaded
+    return joblib.load(MODEL_PATH)
+
+
+try:
+    model = _load_model()
+except Exception as exc:  # noqa: BLE001 - a missing champion is a normal state before the first promotion
+    model = None
+    MODEL_INFO["error"] = str(exc)
+    logger.warning("model not loaded (%s): /health reports 'no model' until a restart finds one", exc)
 
 REQUEST_COUNT = Counter(
     "fraud_api_requests_total",
@@ -66,7 +94,9 @@ async def observe_requests(request: Request, call_next):
 
 @app.get("/health")
 def health():
-    return {"status": "ok"}
+    if model is None:
+        raise HTTPException(status_code=503, detail={"status": "no model", **MODEL_INFO})
+    return {"status": "ok", **MODEL_INFO}
 
 
 @app.get("/metrics")
@@ -76,6 +106,8 @@ def metrics():
 
 @app.post("/predict")
 def predict(features: dict):
+    if model is None:
+        raise HTTPException(status_code=503, detail={"status": "no model", **MODEL_INFO})
     try:
         validate_predict_payload(features)
     except ValidationError as exc:

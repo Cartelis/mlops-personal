@@ -1,0 +1,17 @@
+# Week 9: one image for every pipeline step - training pods, the Ray cluster and the
+# model service. Same pins as week 3 (numpy/scikit-learn/scipy), plus MLflow and Ray.
+# Not built with -c constraints-week3.txt: that file pins pandas==3.0.5, but mlflow 3.15.2
+# declares pandas<3 (pandas 3 is accepted from mlflow 3.16.0). The image keeps the course-wide
+# MLflow pin (the tracking server is v3.15.2) and uses the last pandas 2.x instead.
+numpy==2.5.3
+scipy==1.18.1
+scikit-learn==1.9.1
+pandas==2.3.3
+joblib==1.6.0
+threadpoolctl==3.7.0
+pyyaml==6.0.3
+mlflow==3.15.2
+ray[default,tune]==2.59.0
+fastapi==0.141.1
+uvicorn==0.53.0
+prometheus-client==0.26.0

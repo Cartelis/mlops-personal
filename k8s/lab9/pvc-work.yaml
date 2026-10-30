@@ -1,0 +1,12 @@
+# Shared working volume of the pipeline: data/ and models/ of every pod and of the Ray cluster.
+# ReadWriteOnce is enough because the lab cluster has one node.
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: fraud-work
+  namespace: airflow
+spec:
+  accessModes: ["ReadWriteOnce"]
+  resources:
+    requests:
+      storage: 1Gi

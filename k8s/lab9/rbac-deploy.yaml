@@ -1,0 +1,29 @@
+# The DAG's deploy task restarts the model service in namespace mlops from the Airflow scheduler.
+# Airflow's own RBAC (from the chart) only covers pods in namespace airflow, so this Role adds the
+# minimum needed in mlops: read and patch Deployments, read pods to wait for the rollout.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: fraud-deployer
+  namespace: mlops
+rules:
+  - apiGroups: ["apps"]
+    resources: ["deployments"]
+    verbs: ["get", "list", "patch"]
+  - apiGroups: [""]
+    resources: ["pods"]
+    verbs: ["get", "list"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: fraud-deployer
+  namespace: mlops
+subjects:
+  - kind: ServiceAccount
+    name: airflow-scheduler
+    namespace: airflow
+roleRef:
+  kind: Role
+  name: fraud-deployer
+  apiGroup: rbac.authorization.k8s.io

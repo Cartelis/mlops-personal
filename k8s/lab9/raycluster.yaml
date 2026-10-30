@@ -1,0 +1,82 @@
+# A small Ray cluster managed by the KubeRay operator: one head, one worker, both from the lab image.
+# It lives next to the pipeline pods and mounts the same working volume, so a Ray job reads the
+# prepared data and writes the tuned model where the other steps expect them.
+apiVersion: ray.io/v1
+kind: RayCluster
+metadata:
+  name: fraud-ray
+  namespace: airflow
+spec:
+  rayVersion: "2.59.0"
+  headGroupSpec:
+    rayStartParams:
+      num-cpus: "1"
+      dashboard-host: "0.0.0.0"
+      object-store-memory: "200000000"
+    template:
+      spec:
+        containers:
+          - name: ray-head
+            image: fraud-train:lab9
+            imagePullPolicy: IfNotPresent
+            env:
+              - name: MLFLOW_TRACKING_URI
+                value: http://mlflow.mlops.svc:5000
+            ports:
+              - containerPort: 6379
+                name: gcs
+              - containerPort: 8265
+                name: dashboard
+              - containerPort: 10001
+                name: client
+            resources:
+              requests:
+                cpu: "500m"
+                memory: "1Gi"
+              limits:
+                memory: "3Gi"   # 2Gi is too tight: Ray's memory monitor (95 %) kills the tune job during the best-config retrain
+            volumeMounts:
+              - name: work
+                mountPath: /work/data
+                subPath: data
+              - name: work
+                mountPath: /work/models
+                subPath: models
+        volumes:
+          - name: work
+            persistentVolumeClaim:
+              claimName: fraud-work
+  workerGroupSpecs:
+    - groupName: cpu
+      replicas: 1
+      minReplicas: 1
+      maxReplicas: 2
+      rayStartParams:
+        num-cpus: "1"
+        object-store-memory: "200000000"
+      template:
+        spec:
+          containers:
+            - name: ray-worker
+              image: fraud-train:lab9
+              imagePullPolicy: IfNotPresent
+              env:
+                - name: MLFLOW_TRACKING_URI
+                  value: http://mlflow.mlops.svc:5000
+              resources:
+                requests:
+                  cpu: "500m"
+                  memory: "512Mi"
+                limits:
+                  memory: "1Gi"
+              volumeMounts:
+                - name: work
+                  mountPath: /work/data
+                  subPath: data
+                - name: work
+                  mountPath: /work/models
+                  subPath: models
+          volumes:
+            - name: work
+              persistentVolumeClaim:
+                claimName: fraud-work

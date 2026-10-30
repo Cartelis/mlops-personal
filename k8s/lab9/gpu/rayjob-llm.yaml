@@ -1,0 +1,69 @@
+# Week 9, extended part: the Qwen3-0.6B fine-tuning as ONE Kubernetes object - a RayJob.
+# KubeRay creates the Ray cluster described below (CPU head + one GPU worker), submits the entrypoint,
+# and deletes the cluster when the job has finished. The model and dataset cache live on a host
+# directory mounted into the node by `minikube start --mount` (scripts/lab9/gpu/10_gpu_cluster_up.sh),
+# so they are downloaded once. W&B: the optional Secret `wandb` (WANDB_API_KEY) turns on online logging.
+apiVersion: ray.io/v1
+kind: RayJob
+metadata:
+  name: qwen3-distill
+  namespace: ray-gpu
+spec:
+  entrypoint: >-
+    python /work/pipeline/ray_jobs/ray_train_llm.py --gpu --num-workers 1
+    --train-size 40 --val-size 8 --log-every 10 --data-dir /cache --storage-path /tmp/ray_results
+  shutdownAfterJobFinishes: true
+  ttlSecondsAfterFinished: 600
+  rayClusterSpec:
+    rayVersion: "2.59.0"
+    headGroupSpec:
+      rayStartParams:
+        num-cpus: "1"
+        num-gpus: "0"
+        dashboard-host: "0.0.0.0"
+      template:
+        spec:
+          containers:
+            - name: ray-head
+              image: fraud-llm:lab9
+              imagePullPolicy: IfNotPresent
+              envFrom:                                           # the driver (entrypoint) runs here and decides
+                - secretRef: {name: wandb, optional: true}       # whether W&B is on - it needs the same env
+              ports:
+                - {containerPort: 6379, name: gcs}
+                - {containerPort: 8265, name: dashboard}
+                - {containerPort: 10001, name: client}
+              resources:
+                requests: {cpu: "500m", memory: "2Gi"}
+                limits: {memory: "4Gi"}
+              volumeMounts:
+                - {name: cache, mountPath: /cache}
+          volumes:
+            - name: cache
+              hostPath: {path: /mnt/llm-cache, type: DirectoryOrCreate}
+    workerGroupSpecs:
+      - groupName: gpu
+        replicas: 1
+        minReplicas: 1
+        maxReplicas: 1
+        rayStartParams:
+          num-cpus: "2"
+        template:
+          spec:
+            containers:
+              - name: ray-worker
+                image: fraud-llm:lab9
+                imagePullPolicy: IfNotPresent
+                envFrom:                                         # WANDB_MODE online/offline (+ key) from 12_submit_llm.sh;
+                  - secretRef: {name: wandb, optional: true}     # no 'env:' WANDB_MODE here - 'env' would override it
+                resources:
+                  requests: {cpu: "1", memory: "8Gi", nvidia.com/gpu: 1}
+                  limits: {memory: "16Gi", nvidia.com/gpu: 1}
+                volumeMounts:
+                  - {name: cache, mountPath: /cache}
+                  - {name: shm, mountPath: /dev/shm}
+            volumes:
+              - name: cache
+                hostPath: {path: /mnt/llm-cache, type: DirectoryOrCreate}
+              - name: shm
+                emptyDir: {medium: Memory, sizeLimit: 2Gi}

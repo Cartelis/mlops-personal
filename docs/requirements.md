@@ -81,7 +81,7 @@ Tikslas: recall >= 0.92, false positive <= 0.5%.
 ## 9.x Orkestravimas (v1.8)
 | ID     | Reikalavimas                         | KPI                                                       |
 |--------|--------------------------------------|-----------------------------------------------------------|
-| NFR-34 | Pipeline end-to-end trukmė           | <= 10 min lab klasteryje (išmatuota: A ≈ 1,5 min)         |
+| NFR-34 | Pipeline end-to-end trukmė           | <= 10 min lab klasteryje (išmatuota: A ≈ 4,2 min)         |
 | NFR-35 | Sąlyginė tune šaka                   | vykdoma tada ir tik tada, kai accuracy < params.threshold |
 | NFR-36 | Žmogaus patvirtinimas prieš champion | 100 % pakėlimų per ApprovalOperator; vartotojas + laikas  |
 | NFR-37 | Idempotentiškas registravimas        | pakartotas register nesukuria dubliuotos versijos         |

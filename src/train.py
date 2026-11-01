@@ -4,17 +4,16 @@
   python src/train.py --n_estimators 300 # override one of them
   dvc repro                              # via the pipeline: records hashes in dvc.lock, produces an MLflow run
 """
+import argparse
 import os
 import subprocess
 from pathlib import Path
 
-import hydra
 import joblib
 import mlflow
 import mlflow.sklearn
 import pandas as pd
 import yaml
-from omegaconf import DictConfig, OmegaConf
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score, f1_score
 
@@ -42,22 +41,16 @@ def dvc_md5(dvc_file: Path) -> str:
         return hashlib.md5(raw.read_bytes()).hexdigest()
     return "untracked"
 
-@hydra.main(version_base=None, config_path="../conf", config_name="config")
-def main(cfg: DictConfig) -> None:
-# def main() -> None:
-    # params = yaml.safe_load((ROOT / "params.yaml").read_text())["train"]
-    # parser = argparse.ArgumentParser()
-    # parser.add_argument("--n_estimators", type=int)
-    # parser.add_argument("--max_depth", type=int)
-    # parser.add_argument("--random_seed", type=int)
-    # for key, value in vars(parser.parse_args()).items():
-    #     if value is not None:
-    #         params[key] = value
 
-    # 1. Konvertuojame Hydra konfigūraciją į plokščią Python žodyną MLflow fiksavimui
-    cfg_dict = OmegaConf.to_container(cfg, resolve=True)
-    params = cfg_dict["train"]  # Pasiimame 'train' parametrus iš conf/config.yaml
-
+def main() -> None:
+    params = yaml.safe_load((ROOT / "params.yaml").read_text())["train"]
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--n_estimators", type=int)
+    parser.add_argument("--max_depth", type=int)
+    parser.add_argument("--random_seed", type=int)
+    for key, value in vars(parser.parse_args()).items():
+        if value is not None:
+            params[key] = value
 
     mlflow.set_experiment(os.environ.get("MLFLOW_EXPERIMENT_NAME", "fraud-detection"))
 
@@ -69,9 +62,6 @@ def main(cfg: DictConfig) -> None:
     run_name = f"rf-n{params['n_estimators']}-d{params['max_depth']}"
     with mlflow.start_run(run_name=run_name) as run:
         mlflow.log_params(params)                                   # config, incl. the seed
-
-        mlflow.log_dict(cfg_dict, "hydra_final_config.json")  # config file for reproducibility
-
         mlflow.set_tags({                                           # identities
             "git_commit": git_commit(),
             "dvc_raw_md5": dvc_md5(ROOT / "data/raw/dataset.csv.dvc"),

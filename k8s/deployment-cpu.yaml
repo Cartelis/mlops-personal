@@ -32,6 +32,8 @@ spec:
           envFrom:
             - configMapRef:
                 name: mlops-config
+            - secretRef:
+                name: mlops-secrets  # FRAUD_API_KEY, MLFLOW_AUTH_TOKEN
           resources:
             requests:
               cpu: "250m"

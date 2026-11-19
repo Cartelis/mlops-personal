@@ -1,0 +1,41 @@
+# CronJob: nightly retrain (02:00 kiekviena nakti) - skirtumas nuo Job:
+# Job paleidziamas ranka ir baigias, CronJob pagal cron grafika vis kartojasi.
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: nightly-retrain
+  namespace: mlops
+spec:
+  schedule: "0 2 * * *"  # min val mėn d. sav. d. -> kas nakti 02:00
+  concurrencyPolicy: Forbid  # neleisti dvieju retrain vienu metu
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 1
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: Never
+          tolerations:
+            - key: "nvidia.com/gpu"
+              operator: "Exists"
+              effect: "NoSchedule"
+          containers:
+            - name: retrain
+              image: mlops-gpu:v1.2.0
+              command: ["torchrun"]
+              args:
+                - "--nproc_per_node=1"
+                - "src/train_ddp.py"
+                - "--epochs=5"
+              resources:
+                requests:
+                  nvidia.com/gpu: 1
+                limits:
+                  nvidia.com/gpu: 1
+              volumeMounts:
+                - name: data
+                  mountPath: /data
+          volumes:
+            - name: data
+              persistentVolumeClaim:
+                claimName: mlops-data

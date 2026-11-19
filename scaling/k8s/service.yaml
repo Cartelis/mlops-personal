@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: fraud-api-lite
+  namespace: scaling-lab
+  labels:
+    app: fraud-api-lite
+spec:
+  selector:
+    app: fraud-api-lite
+  ports:
+    - name: http          # ServiceMonitor refers to the port NAME
+      port: 80
+      targetPort: http

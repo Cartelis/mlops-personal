@@ -71,12 +71,11 @@ python -m observability.evidently_report --output docs/drift-report.json
 python scripts/aiops_correlate.py --drift-report docs/drift-report.json
 # Optional: docker compose -f monitoring/docker-compose.yml up -d
 
-# Week 12: Scaling & cost engineering
-pip install -r requirements-scaling.txt
-python scripts/run_load_test.py --users 50 --run-time 1m
+# Week 12: Scaling (CPU-based HPA vs request-based KEDA) & cost engineering - see Skyrius 12
+uv run scaling/app.py                          # mini app; FEATURE_STORE_MS=40 adds the fake feature store
+docker build -t fraud-api-lite:v1 scaling      # then scaling/k8s/: HPA first, delete it, then KEDA
 python scripts/scaling_simulator.py --rps 800
 python scripts/tco_calculator.py --replicas 32 --spot --rightsizing
-kubectl apply -f k8s/hpa-fraud-api.yaml
 
 # Week 13: Security & compliance
 python -m security.watermark --apply --model models/model.pkl
@@ -118,8 +117,7 @@ pytest tests/test_governance.py -v
 | `federated/` | Flower FedAvg simulation (week 14) |
 | `deploy/edge/` | Edge K8s deployment (week 14) |
 | `security/` | Policies, validation, audit, watermark (week 13) |
-| `scaling/` | Locust load tests (week 12) |
-| `k8s/hpa-fraud-api.yaml` | HPA 1–50 replicas (week 12) |
+| `scaling/` | Mini app, Dockerfile, Locust, HPA (CPU) / KEDA (RPS) manifests in `scaling/k8s/` (week 12) |
 | `monitoring/` | Prometheus, Grafana, alerts (week 11) |
 | `observability/` | JSON logging, Evidently reports (week 11) |
 | `agents/` | LangGraph self-healing agent (week 10) |

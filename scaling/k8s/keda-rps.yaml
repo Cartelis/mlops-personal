@@ -1,0 +1,23 @@
+# Request-based scaling: scale on requests per second. KEDA creates and drives the HPA itself,
+# so there must be NO separate HPA on this Deployment (delete hpa-cpu.yaml first).
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: fraud-api-lite
+  namespace: scaling-lab
+spec:
+  scaleTargetRef:
+    name: fraud-api-lite
+  minReplicaCount: 1
+  maxReplicaCount: 10
+  advanced:
+    horizontalPodAutoscalerConfig:
+      behavior:
+        scaleDown:
+          stabilizationWindowSeconds: 60
+  triggers:
+    - type: prometheus
+      metadata:
+        serverAddress: http://prometheus-operated.monitoring.svc:9090
+        query: sum(rate(fraud_api_requests_total{path="/predict"}[1m]))
+        threshold: "15"        # requests/s PER REPLICA; one replica handles ~22 req/s, so ~70 %

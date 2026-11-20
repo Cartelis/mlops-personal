@@ -1,0 +1,30 @@
+# Load generator INSIDE the cluster (kubectl port-forward would pin all traffic to one pod).
+# Prerequisite:  kubectl -n scaling-lab create configmap locustfile --from-file=scaling/locustfile.py
+# Run:           sed 's/__USERS__/300/' scaling/k8s/loadtest.yaml | kubectl apply -f -
+# Re-run:        kubectl -n scaling-lab delete job loadtest
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: loadtest
+  namespace: scaling-lab
+spec:
+  backoffLimit: 0
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: locust
+          image: locustio/locust:2.47.0
+          env:
+            - {name: LOCUST_LOCUSTFILE, value: /mnt/locust/locustfile.py}
+            - {name: LOCUST_HOST, value: "http://fraud-api-lite"}
+            - {name: LOCUST_HEADLESS, value: "true"}
+            - {name: LOCUST_USERS, value: "__USERS__"}   # 1 user = about 1 request/s
+            - {name: LOCUST_SPAWN_RATE, value: "10"}
+            - {name: LOCUST_RUN_TIME, value: "5m"}
+          volumeMounts:
+            - {name: locustfile, mountPath: /mnt/locust}
+      volumes:
+        - name: locustfile
+          configMap:
+            name: locustfile

@@ -1,0 +1,15 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: fraud-api-lite
+  namespace: scaling-lab
+  labels:
+    release: prometheus      # must match the Helm release name of kube-prometheus-stack
+spec:
+  selector:
+    matchLabels:
+      app: fraud-api-lite
+  endpoints:
+    - port: http
+      path: /metrics
+      interval: 15s

@@ -1,0 +1,22 @@
+# Diskusijos Q4 grandine: Ingress (isorinis LB) -> Service -> Deployment pod'ai.
+# Reikalauja ingress controller (pvz. ingress-nginx): minikube addons enable ingress.
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: mlops-fraud-api
+  namespace: mlops
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: fraud-api.example.com  # pakeisti i savo DNS varda arba curl -H "Host: ..."
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: mlops-fraud-api
+                port:
+                  number: 80

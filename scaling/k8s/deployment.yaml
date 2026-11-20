@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fraud-api-lite
+  namespace: scaling-lab
+spec:
+  # no "replicas:" on purpose - the autoscaler owns the replica count
+  selector:
+    matchLabels:
+      app: fraud-api-lite
+  template:
+    metadata:
+      labels:
+        app: fraud-api-lite
+    spec:
+      containers:
+        - name: api
+          image: fraud-api-lite:v1
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 8080
+          env:
+            - name: FEATURE_STORE_MS      # Act 1: "0" (no feature store)   Act 2: "40"
+              value: "0"
+            - name: FEATURE_STORE_CONNS   # connection pool size of the (fake) feature-store client
+              value: "1"
+          resources:
+            requests:
+              cpu: 250m                   # HPA utilization % is measured against THIS number
+              memory: 128Mi
+            limits:
+              cpu: "1"
+              memory: 256Mi
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: http
+            periodSeconds: 5

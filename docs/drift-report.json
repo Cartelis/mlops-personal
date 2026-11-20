@@ -1,0 +1,50 @@
+{
+  "drift_detected": true,
+  "max_psi": 5.1509,
+  "threshold": 0.25,
+  "features": {
+    "f0": {
+      "psi": 5.1509,
+      "drift_detected": true
+    },
+    "f1": {
+      "psi": 3.8025,
+      "drift_detected": true
+    },
+    "f2": {
+      "psi": 4.9677,
+      "drift_detected": true
+    },
+    "f3": {
+      "psi": 4.3358,
+      "drift_detected": true
+    },
+    "f4": {
+      "psi": 4.2994,
+      "drift_detected": true
+    },
+    "f5": {
+      "psi": 4.3958,
+      "drift_detected": true
+    },
+    "f6": {
+      "psi": 4.0668,
+      "drift_detected": true
+    },
+    "f7": {
+      "psi": 4.0265,
+      "drift_detected": true
+    },
+    "f8": {
+      "psi": 4.0752,
+      "drift_detected": true
+    },
+    "f9": {
+      "psi": 4.3744,
+      "drift_detected": true
+    }
+  },
+  "baseline_rows": 800,
+  "recent_rows": 500,
+  "evidently_html": "C:\\Users\\juran\\OneDrive\\Stalinis kompiuteris\\stud\\MLOps\\fraud-detection\\docs\\drift-report.html"
+}

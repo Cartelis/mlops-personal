@@ -61,3 +61,32 @@ Compare the **same capacity and SLO**; prices are model assumptions, not real qu
 | Max replicas | 10 in the lab cluster, 50 in production (`maxReplicaCount`) |
 | Spot cost savings | >= 60 % vs on-demand at the same capacity |
 | Uptime during scale | >= 99.9 % (Locust: 0 failures) |
+
+## Comparison table
+
+
+| Matas | Act 1: HPA, CPU-bound | Act 2: HPA, feature store | Act 3: KEDA, feature store |
+| :--- | :--- | :--- | :--- |
+| **Replikų skaičius (didžiausias)** | 6 | 1–2 | 2 |
+| **Laikas iki tikslo (NFR-46: ≤ 3 min.)** | 2min15s | - | 1min |
+| **p95 (apkrovos viduryje)** | 0.99 | 2.95 | 2.95 |
+| **CPU, % nuo requests** | 398 | 64 | 33 |
+| **Ką reikėjo nustatyti / išmatuoti** | CPU | CPU | RPS |
+
+
+## Questions
+Kada CPU yra geras scaling signalas, o kada — ne? Kas nustato, koks signalas tinka?
+
+CPU yra geras scaling signalas, kai aplikacija daugiausia atlieka skaičiavimus ir didėjant užklausų skaičiui proporcingai didėja CPU naudojimas. Tačiau CPU nėra tinkamas signalas, kai aplikacija daug laiko praleidžia laukdama išorinių paslaugų, pavyzdžiui, feature store arba Redis. Tokiu atveju CPU naudojimas gali būti mažas, nors užklausų vėlavimas yra labai didelis. Tinkamą scaling signalą turi pasirinkti sistemos kūrėjas, atsižvelgdamas į aplikacijos veikimo pobūdį ir pagrindinį našumo apribojimą.
+
+
+
+Ką KEDA reikalavo iš jūsų, ko HPA nereikalavo (kalibravimas)? Kuo tai rizikinga, jei modelis pasunkės (pvz. MODEL_CPU_MS=6)?
+
+KEDA reikalavo išmatuoti, kiek užklausų per sekundę gali aptarnauti viena replika, ir pagal tai nustatyti threshold reikšmę. Šiame eksperimente pasirinktas 15 RPS threshold, kai viena replika praktiškai gali aptarnauti apie 22 RPS. Tai rizikinga, nes pasunkėjus modeliui, pavyzdžiui, padidinus MODEL_CPU_MS iki 6, vienos replikos pajėgumas sumažėtų, todėl anksčiau nustatytas threshold gali nebeatitikti realių sistemos galimybių.
+
+
+
+Kodėl vienam Deployment’ui turi būti tik vienas autoscaler’is?
+
+Vienam Deployment'ui turi būti naudojamas tik vienas autoscaler'is, nes keli autoscaler'iai gali bandyti vienu metu keisti to paties Deployment'o replikų skaičių. Dėl skirtingų scaling signalų jie gali konfliktuoti ir sukelti nestabilų replikų skaičiaus kitimą. KEDA pati sukuria HPA, todėl atskiras HPA tam pačiam Deployment'ui turi būti pašalintas.

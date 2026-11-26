@@ -1,0 +1,40 @@
+# Vault rule 4: images must be pinned (explicit tag or @sha256 digest), never :latest.
+# ":latest" means "whatever was pushed last" - you cannot audit or reproduce it.
+apiVersion: templates.gatekeeper.sh/v1
+kind: ConstraintTemplate
+metadata:
+  name: k8sdisallowlatesttag
+spec:
+  crd:
+    spec:
+      names:
+        kind: K8sDisallowLatestTag
+  targets:
+    - target: admission.k8s.gatekeeper.sh
+      rego: |
+        package k8sdisallowlatesttag
+
+        containers[c] { c := input.review.object.spec.containers[_] }
+        containers[c] { c := input.review.object.spec.template.spec.containers[_] }
+
+        pinned_by_digest(img) { contains(img, "@sha256:") }
+
+        # tag = text after the last ":" that comes after the last "/" (registry ports contain ":" too)
+        has_tag(img) {
+          parts := split(img, "/")
+          contains(parts[count(parts) - 1], ":")
+        }
+
+        violation[{"msg": msg}] {
+          c := containers[_]
+          not pinned_by_digest(c.image)
+          endswith(c.image, ":latest")
+          msg := sprintf("[image-tag] container '%v' uses ':latest' (%v); pin a version or digest", [c.name, c.image])
+        }
+
+        violation[{"msg": msg}] {
+          c := containers[_]
+          not pinned_by_digest(c.image)
+          not has_tag(c.image)
+          msg := sprintf("[image-tag] container '%v' has no tag (%v = implicit :latest); pin a version or digest", [c.name, c.image])
+        }

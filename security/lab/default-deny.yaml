@@ -1,0 +1,12 @@
+# M2 step 1: "zero trust" - deny ALL incoming traffic to every pod in the vault.
+# After this NOTHING can reach mlflow - not the attacker, but also not fraud-api.
+# Step 2 (your task): write allow-mlflow-from-api.yaml that re-opens exactly one path:
+#   fraud-api  ->  mlflow:8080
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: default-deny-ingress
+  namespace: vault
+spec:
+  podSelector: {}
+  policyTypes: [Ingress]

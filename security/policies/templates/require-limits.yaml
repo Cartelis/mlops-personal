@@ -1,0 +1,30 @@
+# Vault rule 3: every container declares CPU and memory limits.
+# Without limits one pod (or an attacker's crypto-miner) can starve the whole node.
+apiVersion: templates.gatekeeper.sh/v1
+kind: ConstraintTemplate
+metadata:
+  name: k8srequirelimits
+spec:
+  crd:
+    spec:
+      names:
+        kind: K8sRequireLimits
+  targets:
+    - target: admission.k8s.gatekeeper.sh
+      rego: |
+        package k8srequirelimits
+
+        containers[c] { c := input.review.object.spec.containers[_] }
+        containers[c] { c := input.review.object.spec.template.spec.containers[_] }
+
+        violation[{"msg": msg}] {
+          c := containers[_]
+          not c.resources.limits.cpu
+          msg := sprintf("[limits] container '%v' must set resources.limits.cpu", [c.name])
+        }
+
+        violation[{"msg": msg}] {
+          c := containers[_]
+          not c.resources.limits.memory
+          msg := sprintf("[limits] container '%v' must set resources.limits.memory", [c.name])
+        }

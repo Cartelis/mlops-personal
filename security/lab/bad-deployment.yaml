@@ -1,0 +1,26 @@
+# M1: the "intern's deploy". Breaks all 4 vault rules on purpose:
+#   1. privileged: true          -> full access to the node
+#   2. runs as root              -> no runAsNonRoot
+#   3. no resource limits        -> can eat the whole node
+#   4. image :latest             -> unpinned, unauditable
+# Before Gatekeeper: the cluster accepts it without a word.
+# After Gatekeeper:  `kubectl apply` is DENIED with one message per broken rule.
+# Your task: copy it to good-deployment.yaml and fix it until it is accepted AND Running.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: model-trainer
+  namespace: vault
+spec:
+  replicas: 1
+  selector:
+    matchLabels: {app: model-trainer}
+  template:
+    metadata:
+      labels: {app: model-trainer}
+    spec:
+      containers:
+        - name: trainer
+          image: nginx:latest
+          securityContext:
+            privileged: true

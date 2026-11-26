@@ -1,0 +1,109 @@
+# The "vault": a tiny stand-in of our system.
+#   fraud-api  -> the public prediction service
+#   mlflow     -> the internal model registry (the treasure: models, metrics, artefacts)
+# Both are small unprivileged nginx images (multi-arch, ~20 MB) so the lab is fast on any laptop.
+# They already follow all 4 vault rules, so they survive once Gatekeeper is switched on.
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: vault
+  labels:
+    course: mlops-week13
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mlflow-content
+  namespace: vault
+data:
+  index.html: |
+    {"service": "mlflow (stand-in)", "registered_models": ["fraud-detector"],
+     "fraud-detector@champion": "v7", "artifact_uri": "s3://models/fraud-detector/7",
+     "note": "if you can read this from an untrusted pod, the vault is open"}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: fraud-api-content
+  namespace: vault
+data:
+  index.html: |
+    {"service": "fraud-api (stand-in)", "model": "fraud-detector@champion", "status": "ok"}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mlflow
+  namespace: vault
+spec:
+  replicas: 1
+  selector:
+    matchLabels: {app: mlflow}
+  template:
+    metadata:
+      labels: {app: mlflow}
+    spec:
+      securityContext:
+        runAsNonRoot: true
+      containers:
+        - name: mlflow
+          image: nginxinc/nginx-unprivileged:1.27-alpine
+          ports: [{containerPort: 8080}]
+          resources:
+            requests: {cpu: 10m, memory: 16Mi}
+            limits: {cpu: 100m, memory: 64Mi}
+          securityContext:
+            allowPrivilegeEscalation: false
+          volumeMounts:
+            - {name: content, mountPath: /usr/share/nginx/html}
+      volumes:
+        - name: content
+          configMap: {name: mlflow-content}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mlflow
+  namespace: vault
+spec:
+  selector: {app: mlflow}
+  ports: [{port: 5000, targetPort: 8080}]
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fraud-api
+  namespace: vault
+spec:
+  replicas: 1
+  selector:
+    matchLabels: {app: fraud-api}
+  template:
+    metadata:
+      labels: {app: fraud-api}
+    spec:
+      securityContext:
+        runAsNonRoot: true
+      containers:
+        - name: fraud-api
+          image: nginxinc/nginx-unprivileged:1.27-alpine
+          ports: [{containerPort: 8080}]
+          resources:
+            requests: {cpu: 10m, memory: 16Mi}
+            limits: {cpu: 100m, memory: 64Mi}
+          securityContext:
+            allowPrivilegeEscalation: false
+          volumeMounts:
+            - {name: content, mountPath: /usr/share/nginx/html}
+      volumes:
+        - name: content
+          configMap: {name: fraud-api-content}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: fraud-api
+  namespace: vault
+spec:
+  selector: {app: fraud-api}
+  ports: [{port: 80, targetPort: 8080}]

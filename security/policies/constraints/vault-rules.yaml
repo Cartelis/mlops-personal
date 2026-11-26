@@ -1,0 +1,59 @@
+# Where the 4 rules apply: namespace "vault", Pods AND Deployments.
+# Matching Deployments matters: if only Pods were matched, `kubectl apply` of a bad
+# Deployment would "succeed" and its ReplicaSet would silently stay at 0/1.
+# To protect your own project, add your namespace to `namespaces`.
+apiVersion: constraints.gatekeeper.sh/v1beta1
+kind: K8sDisallowPrivileged
+metadata:
+  name: vault-no-privileged
+spec:
+  enforcementAction: deny
+  match:
+    namespaces: ["vault"]
+    kinds:
+      - apiGroups: [""]
+        kinds: ["Pod"]
+      - apiGroups: ["apps"]
+        kinds: ["Deployment"]
+---
+apiVersion: constraints.gatekeeper.sh/v1beta1
+kind: K8sRequireNonRoot
+metadata:
+  name: vault-non-root
+spec:
+  enforcementAction: deny
+  match:
+    namespaces: ["vault"]
+    kinds:
+      - apiGroups: [""]
+        kinds: ["Pod"]
+      - apiGroups: ["apps"]
+        kinds: ["Deployment"]
+---
+apiVersion: constraints.gatekeeper.sh/v1beta1
+kind: K8sRequireLimits
+metadata:
+  name: vault-require-limits
+spec:
+  enforcementAction: deny
+  match:
+    namespaces: ["vault"]
+    kinds:
+      - apiGroups: [""]
+        kinds: ["Pod"]
+      - apiGroups: ["apps"]
+        kinds: ["Deployment"]
+---
+apiVersion: constraints.gatekeeper.sh/v1beta1
+kind: K8sDisallowLatestTag
+metadata:
+  name: vault-pinned-images
+spec:
+  enforcementAction: deny
+  match:
+    namespaces: ["vault"]
+    kinds:
+      - apiGroups: [""]
+        kinds: ["Pod"]
+      - apiGroups: ["apps"]
+        kinds: ["Deployment"]

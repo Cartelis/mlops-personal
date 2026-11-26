@@ -1,0 +1,26 @@
+# Vault rule 1: no privileged containers.
+# A privileged container has (almost) full access to the node, so one compromised
+# container means a compromised node. Works for Pods and Deployments.
+apiVersion: templates.gatekeeper.sh/v1
+kind: ConstraintTemplate
+metadata:
+  name: k8sdisallowprivileged
+spec:
+  crd:
+    spec:
+      names:
+        kind: K8sDisallowPrivileged
+  targets:
+    - target: admission.k8s.gatekeeper.sh
+      rego: |
+        package k8sdisallowprivileged
+
+        # Pod: spec.containers; Deployment: spec.template.spec.containers
+        containers[c] { c := input.review.object.spec.containers[_] }
+        containers[c] { c := input.review.object.spec.template.spec.containers[_] }
+
+        violation[{"msg": msg}] {
+          c := containers[_]
+          c.securityContext.privileged == true
+          msg := sprintf("[privileged] container '%v' must not run privileged", [c.name])
+        }

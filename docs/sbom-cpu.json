@@ -1,0 +1,6 @@
+{
+  "spdxVersion": "SPDX-2.3",
+  "name": "mlops-cpu:local",
+  "packages": [],
+  "note": "trivy not installed; stub SBOM for lab structure"
+}

@@ -1,0 +1,7 @@
+{
+  "model_path": "models\\model.pkl",
+  "sha256": "a45ccd3c1969f1ed342f8b26636323aa4c030d86b22f461bd605a518af5ebc91",
+  "watermark": "a4b146286b248829dfef07658f697dc3",
+  "owner": "mlops-team",
+  "applied_at": "2026-11-26T23:50:37.393507+00:00"
+}

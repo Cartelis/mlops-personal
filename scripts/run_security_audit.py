@@ -14,7 +14,7 @@ from security.watermark import verify_watermark
 
 def check_policies() -> dict:
     policy_dir = ROOT / "security" / "policies"
-    files = sorted(policy_dir.glob("*.yaml")) if policy_dir.exists() else []
+    files = sorted(policy_dir.rglob("*.yaml")) if policy_dir.exists() else []
     return {
         "policy_files": len(files),
         "paths": [str(p.relative_to(ROOT)) for p in files],

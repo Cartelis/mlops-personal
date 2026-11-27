@@ -1,0 +1,38 @@
+{
+  "gatekeeper_policies": {
+    "policy_files": 5,
+    "paths": [
+      "security\\policies\\constraints\\vault-rules.yaml",
+      "security\\policies\\templates\\disallow-latest-tag.yaml",
+      "security\\policies\\templates\\disallow-privileged.yaml",
+      "security\\policies\\templates\\require-limits.yaml",
+      "security\\policies\\templates\\require-non-root.yaml"
+    ],
+    "meets_minimum": true
+  },
+  "ci_security_workflow": {
+    "exists": true,
+    "path": ".github\\workflows\\security.yml"
+  },
+  "trivy_scan": {
+    "status": "skipped",
+    "reason": "trivy not installed",
+    "image": "mlops-cpu:local",
+    "critical": 0,
+    "high": 0
+  },
+  "sbom": {
+    "status": "stub",
+    "output": "C:\\Users\\juran\\OneDrive\\Stalinis kompiuteris\\stud\\MLOps\\fraud-detection\\docs\\sbom-cpu.json",
+    "packages": 0
+  },
+  "model_watermark": {
+    "verified": true,
+    "owner": "mlops-team",
+    "applied_at": "2026-11-26T23:50:37.393507+00:00",
+    "reason": null
+  },
+  "network_policy": true,
+  "inference_audit_log": true,
+  "overall_pass": true
+}
